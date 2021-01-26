@@ -100,7 +100,7 @@ ${O}/pftconMod.o: ${main}/pftconMod.F90 ${O}/shr_kind_mod.o ${O}/clm_varpar.o ${
 	mv pftconMod.o ${O}
 
 ${O}/abortutils.o: ${main}/abortutils.F90 ${O}/shr_kind_mod.o ${O}/clm_varctl.o
-	$(cmplr) -c ${main}/abortutils.F90
+	$(cmplr) -c ${main}/abortutils.F90 -I$(MOD_NETCDF)
 	mv abortutils.o ${O}
 
 ${O}/clm_time_manager.o: ${util}/clm_time_manager.F90 ${O}/shr_kind_mod.o ${O}/clm_varctl.o ${O}/abortutils.o
