@@ -1,0 +1,20 @@
+&clm_inparm
+light       = 1
+gstyp       = 3
+use_colim   = .false.
+use_acclim  = .true.
+use_clm45kn = .false.
+use_tower   = .true.
+use_init    = .true.
+run_spinup  = .false.
+use_hvap    = .false.
+turb_type   = 1
+tower       = 'US-UMB'
+tower_yrbeg = 2006
+tower_yrend = 2006
+tower_month = 7
+diratm      = '/home/bonan/dev/mlcan/tower-forcing/'
+dirclm      = '/home/bonan/dev/mlcan/clm4_5/'
+dirini      = '/home/bonan/dev/mlcan/model-init/'
+dirout      = '/project/bgc01/bonan/flux-tower/output/'
+/

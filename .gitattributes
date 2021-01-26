@@ -1,0 +1,7 @@
+* text=auto
+
+# Some text data used by the model
+*.dat text eol=lf
+
+# Input/validation datasets
+*.nc filter=lfs diff=lfs merge=lfs -text
