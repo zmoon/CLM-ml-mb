@@ -74,7 +74,6 @@ contains
     wind      => mlcanopy_inst%wind     , &  ! Wind speed profile (m/s)
     tair      => mlcanopy_inst%tair     , &  ! Air temperature profile (K)
     tleaf     => mlcanopy_inst%tleaf    , &  ! Leaf temperature (K)
-    dpai      => mlcanopy_inst%dpai     , &  ! Layer plant area index (m2/m2)
                                              ! *** Output ***
     gbh       => mlcanopy_inst%gbh      , &  ! Leaf boundary layer conductance, heat (mol/m2 leaf/s)
     gbv       => mlcanopy_inst%gbv      , &  ! Leaf boundary layer conductance, H2O (mol H2O/m2 leaf/s)
