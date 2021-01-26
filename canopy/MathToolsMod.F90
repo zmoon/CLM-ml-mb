@@ -25,9 +25,10 @@ module MathToolsMod
     function xfunc (p, iv, il, mlcanopy_inst, x) result(f)
     use shr_kind_mod, only : r8 => shr_kind_r8
     use CanopyFluxesMultilayerType, only : mlcanopy_type
-    integer :: p, iv, il
-    real(r8) :: x, f
-    type(mlcanopy_type) :: mlcanopy_inst
+    integer, intent(in) :: p, iv, il
+    real(r8), intent(in) :: x
+    real(r8) :: f
+    type(mlcanopy_type), intent(inout) :: mlcanopy_inst
     end function xfunc
   end interface
 
