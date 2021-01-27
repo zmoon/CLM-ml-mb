@@ -6,8 +6,10 @@
 # To remove obj files and mod files: type 'make clean'
 # ###############################################
  
-LIB_NETCDF=     /usr/local/netcdf/lib
-MOD_NETCDF=     /usr/local/netcdf/lib 
+# LIB_NETCDF=     /usr/local/netcdf/lib
+# MOD_NETCDF=     /usr/local/netcdf/lib
+LIB_NETCDF = /usr/include
+MOD_NETCDF = /usr/include
 
 # Source code directories
  
@@ -29,7 +31,8 @@ prgm = prgm.exe
 # Fortran 95 compiler
 
 # cmplr = pgf90
-cmplr = pgf90 -C -Minform=inform -Ktrap=fp
+# cmplr = pgf90 -C -Minform=inform -Ktrap=fp
+cmplr = gfortran -fno-range-check -std=f2003 -ffree-line-length-none
 
 # Specify module files (that all other files use). Order matters, because some files
 # are used by other files in mods list

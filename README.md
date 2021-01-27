@@ -8,6 +8,22 @@ Note
   which goes with a 2018 GMD paper: doi:[10.5194/gmd-11-1467-2018](https://doi.org/10.5194/gmd-11-1467-2018)
 
 
+## Dependencies
+
+### Ubuntu
+
+(or other Linux with `apt`)
+
+```bash
+sudo apt install gfortran libnetcdf-dev libnetcdff-dev libblas-dev liblapack-dev
+```
+
+Set `LIB_NETCDF` and `MOD_NETCDF` in the Makefile to the output of `nf-config --includedir` (for me in Jan 2021, `/usr/include`).
+
+
+<!-- TODO: Conda, Brew  -->
+
+
 ## Original Bonan notes
 
 *Provided by Bonan in a Word document along with the driver code, modified slightly by me.*
