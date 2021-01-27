@@ -202,7 +202,6 @@ contains
     dpai           => mlcanopy_inst%dpai       , &  ! Layer plant area index (m2/m2)
     trleaf         => mlcanopy_inst%trleaf     , &  ! Leaf transpiration flux (mol H2O/m2 leaf/s)
     evleaf         => mlcanopy_inst%evleaf     , &  ! Leaf evaporation flux (mol H2O/m2 leaf/s)
-    dpai           => mlcanopy_inst%dpai       , &  ! Layer plant area index (m2/m2)
     fracsun        => mlcanopy_inst%fracsun    , &  ! Sunlit fraction of canopy layer
     fracsha        => mlcanopy_inst%fracsha    , &  ! Shaded fraction of canopy layer
                                                     ! *** Input/Output ***
