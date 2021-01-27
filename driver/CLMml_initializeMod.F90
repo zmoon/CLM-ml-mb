@@ -259,6 +259,7 @@ contains
     real(r8) :: lai_miss                         ! Missing leaf area after imposing dpai_min constraint on layers (m2/m2)
     real(r8) :: sai_miss                         ! Missing stem area after imposing dpai_min constraint on layers (m2/m2)
     real(r8), parameter :: dpai_min = 0.01_r8    ! Minimum plant area to be considered a vegetation layer (m2/m2)
+    integer  :: i                                ! PFT index in loop below setting top canopy height
 
     ! CLM top canopy height, by PFTs
 
