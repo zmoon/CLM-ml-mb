@@ -1,4 +1,9 @@
 
+# Compiled modules + executable
+*.mod
+exe/*.exe
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
