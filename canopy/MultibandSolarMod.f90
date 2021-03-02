@@ -58,7 +58,7 @@ contains
     open(unit=10, file=fp)
       read(10, *)  ! one header line
       do i = 1, n
-        read(10, *) wl(i), si_dr(i), si_dr(i)
+        read(10, *) wl(i), si_dr(i), si_df(i)
       end do
     close(10)
   end subroutine load_solar_spectrum
@@ -115,7 +115,6 @@ contains
     real(r8), dimension(:), intent(in) :: x, y
     real(r8), dimension(:), intent(in) :: bins
     real(r8), dimension(:), allocatable :: ynew
-    real(r8) :: xgu, xgl
     integer :: i, n
     n = size(bins)  ! number of bins!
 

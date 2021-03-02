@@ -1,6 +1,6 @@
 !> Test out the functionality of the multi-band mod
 !> In Bash, use this one-liner in this directory to run:
-!> gfortran -c MultibandSolarMod.f90 -I../exe && gfortran test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o && ./a.out
+!> gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o && ./a.out
 program test
   use shr_kind_mod, only : r8 => shr_kind_r8
   use MultibandSolarMod
@@ -20,7 +20,7 @@ program test
 
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
-  print *, "!> leaf spectrum: wavelength (um), refl., trans."
+  print *, "!> leaf spectrum: wavelength (um), leaf element reflectance, transmittance"
   do i = 1, nwl_print
     print *, i, wl0_leaf(i), rl0(i), tl0(i)
   end do
