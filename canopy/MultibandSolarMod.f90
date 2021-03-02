@@ -88,9 +88,55 @@ contains
     rs = f_wet * rs_wet + (1 - f_wet) * rs_dry 
   end subroutine load_soil_spectrum
 
+  !> Smear y(x) values over the single bin defined by [xgl, xgu]
+  !> Using cumulative extrapolative trapezoidal integration, based on TUV's smear
+  real(r8) function smear1(x, y, xgl, xgu) result(yg) 
+    real(r8), dimension(:), intent(in) :: x, y
+    real(r8), intent(in) :: xgl, xgu
+    real(r8) :: area, a1, a2, slope, b1, b2
+    integer :: k, n
+    n = size(x)
 
-  ! TUV smear fn
+    area = 0
+    do k = 1, n - 1
+      if ( x(k+1) < xgl .or. x(k) > xgu ) cycle  ! outside window, go to next
+      a1 = max(x(k), xgl)
+      a2 = min(x(k+1), xgu)
+      slope = (y(k+1) - y(k)) / (x(k+1) - x(k))
+      b1 = y(k) + slope * (a1 - x(k))
+      b2 = y(k) + slope * (a2 - x(k))
+      area = area + (a2 - a1) * (b2 + b1) / 2
+    end do
+    yg = area / (xgu - xgl)
+  end function smear1
 
+  !> Smear y(x) values to x-bins (bin edges!) using smear1
+  function smear(x, y, bins) result(ynew)
+    real(r8), dimension(:), intent(in) :: x, y
+    real(r8), dimension(:), intent(in) :: bins
+    real(r8), dimension(:), allocatable :: ynew
+    real(r8) :: xgu, xgl
+    integer :: i, n
+    n = size(bins)  ! number of bins!
+
+    allocate(ynew(n-1))
+    do i = 1, n - 1
+      ynew(i) = smear1(x, y, bins(i), bins(i+1))
+      ! print *, ynew(i)
+    end do
+  end function smear
+
+  !> Trapezoidal integral of y(x)
+  pure real(r8) function trapz(x, y) result(res)
+    real(r8), dimension(:), intent(in) :: x, y
+    integer :: i, n
+    n = size(x)
+
+    res = 0  ! don't really need loop to do this
+    do i = 1, n - 1
+      res = res + (y(i) + y(i+1))/2 * (x(i+1) - x(i))
+    end do
+  end function trapz
 
   ! main distribute rad subroutine
   ! 1. Load reference spectra
