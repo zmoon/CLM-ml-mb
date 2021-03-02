@@ -6,13 +6,16 @@ program test
   use MultibandSolarMod
   implicit none
 
+  !> Initial data, loaded from the files
   real(r8) :: &
     wl0_leaf(nwl_leaf), rl0(nwl_leaf), tl0(nwl_leaf), &
     wl0_solar(nwl_solar), si_dr(nwl_solar), si_df(nwl_solar), &
     wl0_soil(nwl_soil), rs0(nwl_soil)
 
+  !> Smeared
   real(r8) :: & 
-    x1(11), y1(11), bins1(6), ynew1(5), dbins1(5)
+    x1(11), y1(11), bins1(6), ynew1(5), dbins1(5), &
+    wle1(4), dwl1(3), rl1(3)
 
   integer, parameter :: nwl_print = 3
 
@@ -55,7 +58,7 @@ program test
 
   !> Basic smearing test
   x1 = [ (real(i, r8), i = 0, 10) ]
-  y1 = (x1 - 5)**2
+  y1 = 25 - (x1 - 5)**2  ! inverted parabola, true integral is 500/3 ~ 166.67
   bins1 = [0., 2.5, 7., 8., 9., 10.]
   n = ubound(bins1, dim=1)
   dbins1 = bins1(2:n) - bins1(1:n-1)
@@ -69,9 +72,17 @@ program test
   print *, "new integ.:", sum(ynew1 * dbins1)
   if ( sum(ynew1 * dbins1) /= trapz(x1, y1) ) stop "smear no good"  ! TODO: function for this check
 
-
   !> Smear leaf
-
+  wle1 = [0.4, 0.7, 1.0, 2.5]  ! note: same endpoints as orig
+  n = ubound(wle1, dim=1)
+  dwl1 = wle1(2:n) - wle1(1:n-1)
+  rl1 = smear(wl0_leaf, rl0, wle1)
+  print *
+  print *, "!> smearing leaf reflectance"
+  print *, "orig trapz:", trapz(wl0_leaf, rl0)
+  print *, "new integ.:", sum(rl1 * dwl1)
+  print *, "orig avg.:", trapz(wl0_leaf, rl0) / (wle1(n) - wle1(1))
+  print *, "new avg.:", sum(rl1 * dwl1) / (wle1(n) - wle1(1))
 
   !> Smear soil
 
