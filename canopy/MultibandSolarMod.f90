@@ -32,6 +32,8 @@ module MultibandSolarMod
 
 contains
 
+  ! Note: the paths will need to modified, `./` -> `../canopy/` to work in the real model
+
   !> Load the sample leaf spectrum
   subroutine load_leaf_spectrum(wl, rl, tl)
     integer, parameter :: n = nwl_leaf  ! number of values/lines
