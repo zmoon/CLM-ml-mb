@@ -90,7 +90,7 @@ contains
 
   !> Smear y(x) values over the single bin defined by [xgl, xgu]
   !> Using cumulative extrapolative trapezoidal integration, based on TUV's smear
-  real(r8) function smear1(x, y, xgl, xgu) result(yg) 
+  pure real(r8) function smear1(x, y, xgl, xgu) result(yg) 
     real(r8), dimension(:), intent(in) :: x, y
     real(r8), intent(in) :: xgl, xgu
     real(r8) :: area, a1, a2, slope, b1, b2
@@ -111,7 +111,7 @@ contains
   end function smear1
 
   !> Smear y(x) values to x-bins (bin edges!) using smear1
-  function smear(x, y, bins) result(ynew)
+  pure function smear(x, y, bins) result(ynew)
     real(r8), dimension(:), intent(in) :: x, y
     real(r8), dimension(:), intent(in) :: bins
     real(r8), dimension(:), allocatable :: ynew
@@ -122,7 +122,6 @@ contains
     allocate(ynew(n-1))
     do i = 1, n - 1
       ynew(i) = smear1(x, y, bins(i), bins(i+1))
-      ! print *, ynew(i)
     end do
   end function smear
 
