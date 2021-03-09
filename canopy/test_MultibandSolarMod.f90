@@ -17,9 +17,15 @@ program test
     x1(11), y1(11), bins1(6), ynew1(5), dbins1(5), &
     wle1(4), dwl1(3), rl1(3)
 
+  !> Distribute rad
+  real(r8) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4)
+  real(r8), dimension(3) :: wl, dwl, rl, tl, rs, idr, idf
+
   integer, parameter :: nwl_print = 3
 
   integer :: i, n
+
+  character(len=40) :: fmt1
 
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
@@ -85,5 +91,23 @@ program test
   print *, "new avg.:", sum(rl1 * dwl1) / (wle1(n) - wle1(1))
 
   !> Smear soil
+
+  !> Full distribute-rad routine
+  wlbi = [0.4, 0.7]  ! (um) PAR band edges
+  rli = 0.2
+  tli = 0.15
+  rsi = 0.25
+  idri = 500
+  idfi = 100
+  wle = [0.4, 0.5, 0.6, 0.7]  ! new band edges
+  call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle, wl, dwl, rl, tl, rs, idr, idf)
+  print *
+  print *, "!> distribute rad"
+  fmt1 = "(1x, a3, 2x, g8.3, a, 2x, 3(g10.3))"
+  print fmt1, 'rl', rli, '->', rl
+  print fmt1, 'tl', tli, '->', tl
+  print fmt1, 'rs', rsi, '->', rs
+  print fmt1, 'idr', idri, '->', idr
+  print fmt1, 'idf', idfi, '->', idf
 
 end program test

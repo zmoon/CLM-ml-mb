@@ -147,6 +147,60 @@ contains
   !   - surfalb_inst (albgrd_col, albgri_col, ...)
   !   - clm_varpar (numrad, ...)
   !   Or instead create an input type that has all of the necessary things
+  subroutine distribute_rad(  &
+    wlbi, rli, tli, rsi, idri, idfi,  &  ! TODO: clean up by making some types?
+    wle,  &
+    wl, dwl, rl, tl, rs, idr, idf  &
+  )
+    real(r8), intent(in) :: wlbi(2)  ! wl bounds for the single band for the input values
+    real(r8), intent(in) :: rli, tli, rsi, idri, idfi  ! input values (single band)
+    real(r8), dimension(:), intent(in) :: wle  ! wavelength bounds for new grid
+    real(r8), dimension(:), intent(out) :: wl, dwl
+    real(r8), dimension(:), intent(out) :: rl, tl, rs, idr, idf  ! new values (spectral)
+
+    ! Reference spectra (later could be an input)
+    real(r8), dimension(nwl_leaf) :: wl0_leafsoil, rl0, tl0, rs0
+    real(r8), dimension(nwl_solar) :: wl0_solar, sidr0, sidf0
+
+    ! Local variables
+    integer :: n, nbins
+    real(r8), dimension(:), allocatable :: sidr, sidf
+
+    ! New wavelength grid
+    n = ubound(wle, dim=1)  ! number of bin edges (nbins + 1)
+    if ( wle(1) /= wle(1) .or. wle(n) /= wlbi(2) ) stop 'wle edges should match orig band'
+    dwl = wle(2:n) - wle(1:n-1)  ! new wavelength band widths
+    wl = wl(1:n-1) + dwl  ! wavelength band centers (bin midpoints)
+    nbins = n - 1
+    allocate(sidr(n-1), sidf(n-1))
+
+    ! Load and smear optical properties
+    call load_leaf_spectrum(wl0_leafsoil, rl0, tl0)
+    rl = smear(wl0_leafsoil, rl0, wle)
+    tl = smear(wl0_leafsoil, tl0, wle)
+    call load_soil_spectrum(wl0_leafsoil, rs0)
+    rs = smear(wl0_leafsoil, rs0, wle)
+
+    ! Correct optical property spectra based on the input values
+    ! We want the bandwidth-weighted average to match
+    rl = rl * rli / (sum(rl * dwl) / (wle(n) - wle(1)))
+    tl = tl * tli / (sum(tl * dwl) / (wle(n) - wle(1)))
+    rs = rs * rsi / (sum(rs * dwl) / (wle(n) - wle(1)))
+
+    ! Load and smear irradiances
+    call load_solar_spectrum(wl0_solar, sidr0, sidf0)
+    sidr = smear(wl0_solar, sidr0, wle)
+    sidf = smear(wl0_solar, sidf0, wle)
+    idr = sidr * dwl  ! W m-2 um-1 -> W m-2
+    idf = sidf * dwl
+
+    ! Correct irradiances based on the input values
+    ! We want the integral (sum of in-band irradiances) to match
+    ! Since we have already multiplied by `dwl`, the integral is just the sum
+    idr = idr * idri / sum(idr)
+    idf = idf * idfi / sum(idf)
+
+  end subroutine distribute_rad
 
 
   ! Integration, for application after CRT
