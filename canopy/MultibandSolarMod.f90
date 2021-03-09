@@ -50,6 +50,7 @@ contains
     wl = wl / 1000  ! nm -> um
   end subroutine load_leaf_spectrum
 
+
   !> Load the sample solar spectrum
   subroutine load_solar_spectrum(wl, si_dr, si_df)
     integer, parameter :: n = nwl_solar  ! number of values/lines
@@ -66,6 +67,7 @@ contains
   end subroutine load_solar_spectrum
 
   ! TODO: Planck as another option for solar shape?
+
 
   !> Load the sample soil spectrum
   subroutine load_soil_spectrum(wl, rs)
@@ -90,6 +92,7 @@ contains
     rs = f_wet * rs_wet + (1 - f_wet) * rs_dry 
   end subroutine load_soil_spectrum
 
+
   !> Smear y(x) values over the single bin defined by [xgl, xgu]
   !> Using cumulative extrapolative trapezoidal integration, based on TUV's smear
   pure real(r8) function smear1(x, y, xgl, xgu) result(yg) 
@@ -112,6 +115,7 @@ contains
     yg = area / (xgu - xgl)
   end function smear1
 
+
   !> Smear y(x) values to x-bins (bin edges!) using smear1
   pure function smear(x, y, bins) result(ynew)
     real(r8), dimension(:), intent(in) :: x, y
@@ -126,6 +130,7 @@ contains
     end do
   end function smear
 
+
   !> Trapezoidal integral of y(x)
   pure real(r8) function trapz(x, y) result(res)
     real(r8), dimension(:), intent(in) :: x, y
@@ -137,6 +142,7 @@ contains
       res = res + (y(i) + y(i+1))/2 * (x(i+1) - x(i))
     end do
   end function trapz
+
 
   ! main distribute rad subroutine
   ! 1. Load reference spectra
