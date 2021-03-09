@@ -29,16 +29,20 @@ module MultibandSolarMod
   ! Number of wavelengths in each of the spectrum shape definitions
   integer, parameter :: nwl_leaf = 2101, nwl_solar = 122, nwl_soil = 2101
 
+  ! Relative path to the location of the data files (so it matters where the code is run from)
+  character(len=*), parameter :: &
+    refspecbasepath = "./"  ! for testing
+    ! refspecbasepath = "../canopy/"  ! when running CLM-ml
+
 
 contains
 
-  ! Note: the paths will need to modified, `./` -> `../canopy/` to work in the real model
 
   !> Load the sample leaf spectrum
   subroutine load_leaf_spectrum(wl, rl, tl)
     integer, parameter :: n = nwl_leaf  ! number of values/lines
     real(r8), dimension(n), intent(out) :: wl, rl, tl  ! wavelength, leaf reflectance, leaf transmittance
-    character(len=*), parameter :: fp = "./PROSPECT_sample.txt"  ! file path
+    character(len=*), parameter :: fp = refspecbasepath // "PROSPECT_sample.txt"  ! file path
     integer :: i
 
     open(unit=10, file=fp)
@@ -55,7 +59,7 @@ contains
   subroutine load_solar_spectrum(wl, si_dr, si_df)
     integer, parameter :: n = nwl_solar  ! number of values/lines
     real(r8), dimension(n), intent(out) :: wl, si_dr, si_df  ! wavelength, downwelling *spectral* direct irradiance, " " diffuse
-    character(len=*), parameter :: fp = "./SPCTRAL2_xls_default-spectrum.csv"
+    character(len=*), parameter :: fp = refspecbasepath // "SPCTRAL2_xls_default-spectrum.csv"
     integer :: i
 
     open(unit=10, file=fp)
@@ -74,7 +78,7 @@ contains
     integer, parameter :: n = nwl_soil  ! number of values/lines
     real(r8), dimension(n), intent(out) :: wl, rs  ! wavelength, soil reflectivity
     real(r8), dimension(n) :: rs_dry, rs_wet
-    character(len=*), parameter :: fp = "./PROSAIL_sample-soil.txt"  ! file path
+    character(len=*), parameter :: fp = refspecbasepath // "PROSAIL_sample-soil.txt"  ! file path
     real(r8), parameter :: f_wet = 0
     integer :: i
 
