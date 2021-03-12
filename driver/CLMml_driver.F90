@@ -67,6 +67,7 @@ contains
 
     ! Initialize run control variables
 
+    print *, "  initializing run control variables ..."
     call control
 
     ! Process the tower site (it) and year (iy)
@@ -89,7 +90,8 @@ contains
 
        call get_curr_date (yr, mon, day, curr_date_tod)
 
-       write (iulog,*) 'Processing: ',tower_id(it),yr,mon
+      !  write (iulog,*) 'Processing: ',tower_id(it),yr,mon
+       print *, '  processing: ',tower_id(it),yr,mon
 
        !---------------------------------------------------------------
        ! Number of time steps to execute
@@ -119,6 +121,7 @@ contains
        ! Initialize variables
        !---------------------------------------------------------------
 
+       print *, "  initializing variables ..."
        call initialize (it, iy, bounds%begp, bounds%endp, bounds%begc, bounds%endc, &
        soilstate_inst, waterstate_inst, temperature_inst, surfalb_inst, mlcanopy_inst)
 
@@ -128,16 +131,19 @@ contains
        ! point. This grid point has one CLM soil column with one CLM patch.
        !---------------------------------------------------------------
 
+       print *, "  building patch/column mapping for g/l/c/p ..."
        call clm_subgrid()
 
        ! Build CLM filters to process grid points
 
+       print *, "  building CLM filters ..."
        call setFilters (filter)
 
        !---------------------------------------------------------------
        ! Read tower meteorology data once to get acclimation temperature
        !---------------------------------------------------------------
 
+       print *, "  reading tower met data ..."
        call init_acclim (it, iy, mon, bounds%begp, bounds%endp, atm2lnd_inst, &
        temperature_inst, mlcanopy_inst)
 
@@ -145,6 +151,7 @@ contains
        ! Orbital parameters for this year
        !---------------------------------------------------------------
 
+       print *, "  calculating orbital params ..."
        call shr_orb_params (iy, eccen, obliq, mvelp, obliqr, lambm0, mvelpp)
 
        !---------------------------------------------------------------
@@ -167,6 +174,7 @@ contains
        ! Open model output files
        !---------------------------------------------------------------
 
+       print *, "  opening model output files ..."
        write (ext,'(a6,"_",i4.4,"-",i2.2,"_flux.out")') tower_id(it),iy,mon
        fout1 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
        nout1 = shr_file_getUnit()
@@ -186,6 +194,7 @@ contains
        ! Time stepping loop
        !---------------------------------------------------------------
 
+       print *, "  starting the time loop ..."
        do istep = 1, ntim
 
           ! Get current date, time, and calendar day. These are for itim (at
