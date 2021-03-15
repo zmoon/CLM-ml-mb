@@ -34,8 +34,32 @@ module MultibandSolarMod
     refspecbasepath = "./"  ! for testing
     ! refspecbasepath = "../canopy/"  ! when running CLM-ml
 
+  ! Wavelength bounds for some common bands (um)
+  real(r8), dimension(2) :: &
+    wlb_par = [0.4, 0.7], &
+    wlb_nir = [0.7, 2.5]  ! no use going further since don't have leaf/soil data
+
 
 contains
+
+
+  !> Generate equal-width wavelength sub-bands for a certain spectral region
+  !> Returns band edges, so the result will have size *n+1, not n*
+  pure function wle_equal_width(wlb, n) result(wle)
+    real(r8), intent(in) :: wlb(2)  ! wavelength bounds of the region
+    integer, intent(in) :: n  ! desired number of bands
+    real(r8) :: wle(n+1)
+
+    integer :: i
+    real(r8) :: dwl
+    dwl = (wlb(2) - wlb(1)) / n
+
+    wle(1) = wlb(1)
+    do i = 2, n
+      wle(i) = wle(i-1) + dwl
+    end do
+    wle(n+1) = wlb(2)
+  end function wle_equal_width
 
 
   !> Load the sample leaf spectrum

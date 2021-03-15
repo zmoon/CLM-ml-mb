@@ -26,7 +26,7 @@ program test
 
   integer :: i, n
 
-  character(len=40) :: fmt1
+  character(len=40) :: fmt1, fmt2
 
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
@@ -122,5 +122,11 @@ program test
   print *, 'rs', rsi, rs2, rs2 - rsi
   print *, 'idr', idri, idr2, idr2 - idri
   print *, 'idf', idfi, idf2, idf2 - idfi
+
+  !> Evenly-spaced wavelength grid generation
+  print *
+  print *, "!> evenly spaced grid generation?"
+  fmt2 = "(2(g8.3), a, 4x, 11(g8.3))"
+  print fmt2, wle2, "->", wle_equal_width(wle2, 10)
 
 end program test
