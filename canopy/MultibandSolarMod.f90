@@ -237,6 +237,57 @@ contains
   end subroutine distribute_rad
 
 
+  !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
+  function distribute(wlbi, yi, wle, which) result(y)
+    real(r8), intent(in) :: wlbi(2), yi, wle(:)
+    character(len=*), intent(in) :: which
+    real(r8), allocatable :: y(:)
+
+    real(r8), allocatable :: wl0(:), y0(:), y02(:), dwl(:)
+    integer :: n
+
+    n = ubound(wle, dim=1)
+    if ( wle(1) /= wle(1) .or. wle(n) /= wlbi(2) ) stop 'wle edges should match orig band'
+    allocate(y(n-1), dwl(n-1))
+    dwl = wle(2:n) - wle(1:n-1)
+
+    ! Load reference spectrum
+    select case (which)
+      case ('rl', 'tl')
+        allocate(wl0(nwl_leaf), y0(nwl_leaf), y02(nwl_leaf))
+        call load_leaf_spectrum(wl0, y0, y02)  ! TODO: maybe split rl/tl apart?
+        if ( which == 'tl' ) y0 = y02
+
+      case ('rs')
+        allocate(wl0(nwl_soil), y0(nwl_soil))
+        call load_soil_spectrum(wl0, y0)
+
+      case ('idr', 'idf')
+        allocate(wl0(nwl_solar), y0(nwl_solar), y02(nwl_solar))
+        call load_solar_spectrum(wl0, y0, y02)
+        if ( which == 'idf' ) y0 = y02
+
+      case default
+        stop "invalid `which`: '" // which // "'. Valid options are: 'rl', 'tl'"
+
+    end select
+
+    ! Smear reference spectrum to the desired bins
+    y = smear(wl0, y0, wle)
+
+    ! Correct based on input value `yi`
+    select case (which)
+      case ('idr', 'idf')
+        y = y * dwl  ! W m-2 um-1 -> W m-2
+        y = y * yi / sum(y)
+
+      case default
+        y = y * yi / (sum(y * dwl) / (wle(n) - wle(1)))
+
+    end select
+  end function distribute
+
+
   ! Integration, for application after CRT
   ! * reset modified variables in structs to their original values?
   ! * replace CRT outputs by the PAR and NIR integrated ones

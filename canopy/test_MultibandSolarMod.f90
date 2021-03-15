@@ -111,6 +111,16 @@ program test
   print fmt1, 'idr', idri, '->', idr
   print fmt1, 'idf', idfi, '->', idf
 
+  !> Distribute one spectrum at once
+  print *,
+  print *, "!> distribute one spectrum at once (should be same result as above)"
+  print fmt1, 'rl', rli, '->', distribute(wlbi, rli, wle, 'rl')
+  print fmt1, 'tl', tli, '->', distribute(wlbi, tli, wle, 'tl')
+  print fmt1, 'rs', rsi, '->', distribute(wlbi, rsi, wle, 'rs')
+  print fmt1, 'idr', idri, '->', distribute(wlbi, idri, wle, 'idr')
+  print fmt1, 'idf', idfi, '->', distribute(wlbi, idfi, wle, 'idf')
+
+
   !> Check that if we have only one bin we get the same as what we put in
   wle2 = [0.4, 0.7]
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle2, wl2, dwl2, rl2, tl2, rs2, idr2, idf2)
