@@ -11,6 +11,7 @@ import run
 
 def test_run_output_reg():
     # Try to run the model (takes ~ 10 s for the month)
+    run.build()  # in case of changes
     run.run()
 
     # Check time stamps of the output files
