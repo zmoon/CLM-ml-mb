@@ -32,7 +32,7 @@ prgm = prgm.exe
 
 # cmplr = pgf90
 # cmplr = pgf90 -C -Minform=inform -Ktrap=fp
-cmplr = gfortran -fno-range-check -std=f2003 -ffree-line-length-none
+cmplr = gfortran -fno-range-check -std=f2008 -ffree-line-length-none
 
 # Specify module files (that all other files use). Order matters, because some files
 # are used by other files in mods list

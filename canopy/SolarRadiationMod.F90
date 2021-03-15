@@ -12,7 +12,7 @@ module SolarRadiationMod
   use PatchType, only : patch
   use SurfaceAlbedoType, only : surfalb_type
   use CanopyFluxesMultilayerType, only : mlcanopy_type
-  use MultiBandSolarMod, only: distribute_rad
+  use MultiBandSolarMod, only: distribute, wle_equal_width, wlb_par, wlb_nir
   !
   ! !PUBLIC TYPES:
   implicit none
@@ -25,6 +25,9 @@ module SolarRadiationMod
   private :: GoudriaanRadiation      ! Goudriaan radiative transfer
   private :: TwoStreamRadiation      ! Two-stream approximation radiative transfer
   !-----------------------------------------------------------------------
+
+  ! TODO: move to clm_varpar and make this a namelist input
+  integer, parameter :: nsb = 2  ! number of sub-bands to use (equal size for now)
 
 contains
 
@@ -92,6 +95,13 @@ contains
     real(r8) :: avmu(bounds%begp:bounds%endp)              ! Average inverse diffuse optical depth per unit leaf area
     real(r8) :: betad(bounds%begp:bounds%endp,1:numrad)    ! Upscatter parameter for diffuse radiation
     real(r8) :: betab(bounds%begp:bounds%endp,1:numrad)    ! Upscatter parameter for direct beam radiation
+
+    ! For sub-banding
+    ! Two-stream only so far
+    real(r8), dimension(nsb+1) :: wle_par, wle_nir
+    real(r8), dimension(bounds%begp:bounds%endp, 1:numrad, 1:nsb) :: &  ! spectral variables with an additional sub-band dimension
+      rho_sb, tau_sb, omega_sb, &  ! general
+      betad_sb, betab_sb  ! two-stream-specific
     !---------------------------------------------------------------------
 
     associate ( &
@@ -120,6 +130,10 @@ contains
     td         => mlcanopy_inst%td           &  ! Exponential transmittance of diffuse radiation through a single leaf layer
     )
 
+    ! Compute sub-band wavelength grids. TODO: make available module-wide
+    wle_par = wle_equal_width(wlb_par, nsb)
+    wle_nir = wle_equal_width(wlb_nir, nsb)
+
     !---------------------------------------------------------------------
     ! Weight reflectance and transmittance by lai and sai and calculate
     ! leaf scattering coefficient
@@ -137,13 +151,28 @@ contains
     end do
 
     do ib = 1, numrad
-       do f = 1, num_exposedvegp
-          p = filter_exposedvegp(f)
-          rho(p,ib) = max(rhol(patch%itype(p),ib)*wl(p) + rhos(patch%itype(p),ib)*ws(p), 1.e-06_r8)
-          tau(p,ib) = max(taul(patch%itype(p),ib)*wl(p) + taus(patch%itype(p),ib)*ws(p), 1.e-06_r8)
-          omega(p,ib) = rho(p,ib) + tau(p,ib)
-       end do
+      do f = 1, num_exposedvegp
+        p = filter_exposedvegp(f)
+        rho(p,ib) = max(rhol(patch%itype(p),ib)*wl(p) + rhos(patch%itype(p),ib)*ws(p), 1.e-06_r8)
+        tau(p,ib) = max(taul(patch%itype(p),ib)*wl(p) + taus(patch%itype(p),ib)*ws(p), 1.e-06_r8)
+        omega(p,ib) = rho(p,ib) + tau(p,ib)
+
+        ! Compute sub-band values for leaf optical properties
+        if ( ib == 1 ) then  ! PAR
+          if ( ib /= ivis ) stop 'ib 1 should be ivis (PAR) band'
+          rho_sb(p,ib,:) = distribute(wlb_par, rho(p,ib), wle_par, 'rl')
+          tau_sb(p,ib,:) = distribute(wlb_par, tau(p,ib), wle_par, 'tl')
+        else if ( ib == 2 ) then  ! NIR
+          rho_sb(p,ib,:) = distribute(wlb_nir, rho(p,ib), wle_nir, 'rl')
+          tau_sb(p,ib,:) = distribute(wlb_nir, tau(p,ib), wle_nir, 'tl')
+        else
+          stop 'not prepared for `ib` > 2'
+        end if
+        omega_sb(p,ib,:) = rho_sb(p,ib,:) + tau_sb(p,ib,:)
+      end do
     end do
+    ! print *, 'is sub-banding working? orig:', rho(1, 1), 'new:', rho_sb(1, 1, :)
+
 
     !---------------------------------------------------------------------
     ! Direct beam extinction coefficient

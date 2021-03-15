@@ -31,8 +31,8 @@ module MultibandSolarMod
 
   ! Relative path to the location of the data files (so it matters where the code is run from)
   character(len=*), parameter :: &
-    refspecbasepath = "./"  ! for testing
-    ! refspecbasepath = "../canopy/"  ! when running CLM-ml
+    ! refspecbasepath = "./"  ! for testing
+    refspecbasepath = "../canopy/"  ! when running CLM-ml
 
   ! Wavelength bounds for some common bands (um)
   real(r8), dimension(2) :: &
@@ -235,6 +235,12 @@ contains
     idf = idf * idfi / sum(idf)
 
   end subroutine distribute_rad
+
+
+  ! TODO: find a way to keep the reference spectra in memory instead of re-loading
+  ! every time one of the distribute routines is called. Seems to be slowing down CLM-ml
+  ! * create module source file with them defined in the code
+  ! * move the loaders to a separate module and call once only
 
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
