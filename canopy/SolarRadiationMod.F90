@@ -384,6 +384,10 @@ contains
           betad(p,ib) = 0.5_r8 / omega(p,ib) &
                       * ( rho(p,ib) + tau(p,ib) + (rho(p,ib)-tau(p,ib)) * ((1._r8+chil(p))/2._r8)**2 )
 
+          betad_sb(p,ib,:) = 0.5_r8 / omega_sb(p,ib,:) * ( &
+            rho_sb(p,ib,:) + tau_sb(p,ib,:) + (rho_sb(p,ib,:)-tau_sb(p,ib,:)) * ((1._r8+chil(p))/2._r8)**2 &
+          )
+
           ! upscatter parameter for direct beam radiation
 
           tmp0 = gdir(p) + phi2(p) * cos(solar_zen(p))
@@ -391,6 +395,8 @@ contains
           tmp2 = 1._r8 - tmp1/tmp0 * log((tmp1+tmp0)/tmp1)
           asu = 0.5_r8 * omega(p,ib) * gdir(p) / tmp0 * tmp2
           betab(p,ib) = (1._r8 + avmu(p)*kb(p)) / (omega(p,ib)*avmu(p)*kb(p)) * asu
+
+          betab_sb(p,ib,:) = (1._r8 + avmu(p)*kb(p)) / (omega_sb(p,ib,:)*avmu(p)*kb(p)) * asu
 
        end do
     end do
