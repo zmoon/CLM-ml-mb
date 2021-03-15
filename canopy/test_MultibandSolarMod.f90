@@ -18,8 +18,9 @@ program test
     wle1(4), dwl1(3), rl1(3)
 
   !> Distribute rad
-  real(r8) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4)
+  real(r8) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4), wle2(2)
   real(r8), dimension(3) :: wl, dwl, rl, tl, rs, idr, idf
+  real(r8), dimension(1) :: wl2, dwl2, rl2, tl2, rs2, idr2, idf2
 
   integer, parameter :: nwl_print = 3
 
@@ -102,12 +103,24 @@ program test
   wle = [0.4, 0.5, 0.6, 0.7]  ! new band edges
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle, wl, dwl, rl, tl, rs, idr, idf)
   print *
-  print *, "!> distribute rad"
+  print *, "!> distribute rad -- to 3 bands"
   fmt1 = "(1x, a3, 2x, g8.3, a, 2x, 3(g10.3))"
   print fmt1, 'rl', rli, '->', rl
   print fmt1, 'tl', tli, '->', tl
   print fmt1, 'rs', rsi, '->', rs
   print fmt1, 'idr', idri, '->', idr
   print fmt1, 'idf', idfi, '->', idf
+
+  !> Check that if we have only one bin we get the same as what we put in
+  wle2 = [0.4, 0.7]
+  call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle2, wl2, dwl2, rl2, tl2, rs2, idr2, idf2)
+  print *
+  print *, "!> distribute rad -- one band only (results should be same as input, though size-1 array)"
+  print *, "      orig                        new                         diff"
+  print *, 'rl', rli, rl2, rl2 - rli
+  print *, 'tl', tli, tl2, tl2 - tli
+  print *, 'rs', rsi, rs2, rs2 - rsi
+  print *, 'idr', idri, idr2, idr2 - idri
+  print *, 'idf', idfi, idf2, idf2 - idfi
 
 end program test
