@@ -26,7 +26,7 @@ def out_and_back(p):
 def build():
     """Build the model with `make`."""
     with out_and_back(EXE_DIR):
-        subprocess.run(["make"])
+        subprocess.run(["make"], check=True)
 
 
 def run():
@@ -36,5 +36,5 @@ def run():
 
     # Try to run
     with out_and_back(EXE_DIR):
-        subprocess.run(["./prgm.exe"], input=s_nml, text=True)
+        subprocess.run(["./prgm.exe"], input=s_nml, text=True, check=True)
 
