@@ -27,7 +27,7 @@ module SolarRadiationMod
   !-----------------------------------------------------------------------
 
   ! TODO: move to clm_varpar and make this a namelist input
-  integer, parameter :: nsb = 2  ! number of sub-bands to use (equal size for now)
+  integer, parameter :: nsb = 1  ! number of sub-bands to use (equal size for now)
 
 contains
 
@@ -39,7 +39,7 @@ contains
     ! Solar radiation transfer through canopy
     !
     ! !USES:
-    use clm_varpar, only : numrad, nlevcan, isun, isha, ivis
+    use clm_varpar, only : numrad, nlevcan, isun, isha, ivis, nleaf
     use clm_varcon, only : pi => rpi
     use clm_varctl, only : light
     !
@@ -100,8 +100,17 @@ contains
     ! Two-stream only so far
     real(r8), dimension(nsb+1) :: wle_par, wle_nir
     real(r8), dimension(bounds%begp:bounds%endp, 1:numrad, 1:nsb) :: &  ! spectral variables with an additional sub-band dimension
-      rho_sb, tau_sb, omega_sb, &  ! general
+      rho_sb, tau_sb, omega_sb, albsoib_sb, albsoid_sb, swskyb_sb, swskyd_sb, &  ! general
       betad_sb, betab_sb  ! two-stream-specific
+    real(r8) :: &  ! CRT scheme outputs, to be combined over sub-bands and used to update mlcanopy_inst
+      swleaf_sb(bounds%begp:bounds%endp,1:nlevcan,1:nleaf,1:numrad,1:nsb), &
+      swveg_sb(bounds%begp:bounds%endp,1:numrad,1:nsb), &
+      swvegsun_sb(bounds%begp:bounds%endp,1:numrad,1:nsb), &
+      swvegsha_sb(bounds%begp:bounds%endp,1:numrad,1:nsb), &
+      swsoi_sb(bounds%begp:bounds%endp,1:numrad,1:nsb), &
+      albcan_sb(bounds%begp:bounds%endp,1:numrad,1:nsb)
+    real(r8) :: suminc_b(bounds%begp:bounds%endp)  ! local helper variables
+
     !---------------------------------------------------------------------
 
     associate ( &
@@ -122,6 +131,8 @@ contains
     dpai       => mlcanopy_inst%dpai       , &  ! Layer plant area index (m2/m2)
     sumpai     => mlcanopy_inst%sumpai     , &  ! Cumulative plant area index (m2/m2)
     solar_zen  => mlcanopy_inst%solar_zen  , &  ! Solar zenith angle (radians)
+    swskyb     => mlcanopy_inst%swskyb     , &  ! Direct beam radiation (W/m2)
+    swskyd     => mlcanopy_inst%swskyd     , &  ! Diffuse
                                                 ! *** Output ***
     fracsun    => mlcanopy_inst%fracsun    , &  ! Sunlit fraction of canopy layer
     fracsha    => mlcanopy_inst%fracsha    , &  ! Shaded fraction of canopy layer
@@ -157,14 +168,28 @@ contains
         tau(p,ib) = max(taul(patch%itype(p),ib)*wl(p) + taus(patch%itype(p),ib)*ws(p), 1.e-06_r8)
         omega(p,ib) = rho(p,ib) + tau(p,ib)
 
-        ! Compute sub-band values for leaf optical properties
+      end do
+    end do
+    
+    ! Compute sub-banded spectral inputs -- leaf optical properties, ground albedos, downwelling irradiances
+    do ib = 1, numrad
+      do f = 1, num_exposedvegp
+        p = filter_exposedvegp(f)
         if ( ib == 1 ) then  ! PAR
           if ( ib /= ivis ) stop 'ib 1 should be ivis (PAR) band'
           rho_sb(p,ib,:) = distribute(wlb_par, rho(p,ib), wle_par, 'rl')
           tau_sb(p,ib,:) = distribute(wlb_par, tau(p,ib), wle_par, 'tl')
+          albsoib_sb(p,ib,:) = distribute(wlb_par, albsoib(p,ib), wle_par, 'rs')
+          albsoid_sb(p,ib,:) = distribute(wlb_par, albsoid(p,ib), wle_par, 'rs')
+          swskyb_sb(p,ib,:) = distribute(wlb_par, swskyb(p,ib), wle_par, 'idr')
+          swskyd_sb(p,ib,:) = distribute(wlb_par, swskyd(p,ib), wle_par, 'idf')
         else if ( ib == 2 ) then  ! NIR
           rho_sb(p,ib,:) = distribute(wlb_nir, rho(p,ib), wle_nir, 'rl')
           tau_sb(p,ib,:) = distribute(wlb_nir, tau(p,ib), wle_nir, 'tl')
+          albsoib_sb(p,ib,:) = distribute(wlb_nir, albsoib(p,ib), wle_nir, 'rs')
+          albsoid_sb(p,ib,:) = distribute(wlb_nir, albsoid(p,ib), wle_nir, 'rs')
+          swskyb_sb(p,ib,:) = distribute(wlb_nir, swskyb(p,ib), wle_nir, 'idr')
+          swskyd_sb(p,ib,:) = distribute(wlb_nir, swskyd(p,ib), wle_nir, 'idf')
         else
           stop 'not prepared for `ib` > 2'
         end if
@@ -172,8 +197,7 @@ contains
       end do
     end do
     ! print *, 'is sub-banding working? orig:', rho(1, 1), 'new:', rho_sb(1, 1, :)
-
-
+    
     !---------------------------------------------------------------------
     ! Direct beam extinction coefficient
     !---------------------------------------------------------------------
@@ -412,8 +436,37 @@ contains
        call GoudriaanRadiation (bounds, num_exposedvegp, filter_exposedvegp, &
        omega, kb, kbm, kdm, albcanb, albcand, mlcanopy_inst)
     else if (light == 3) then
-       call TwoStreamRadiation (bounds, num_exposedvegp, filter_exposedvegp, &
-       omega, kb, avmu, betad, betab, surfalb_inst, mlcanopy_inst)
+
+      ! Run sub-bands for each main band (PAR and NIR)
+      do ib = 1, numrad
+        call TwoStreamRadiation ( &
+          bounds, num_exposedvegp, filter_exposedvegp, &
+          omega_sb(:,ib,:), kb, avmu, betad_sb(:,ib,:), betab_sb(:,ib,:), albsoib_sb(:,ib,:), albsoid_sb(:,ib,:), &
+          mlcanopy_inst, &
+          swskyb_sb(:,ib,:), swskyd_sb(:,ib,:), &
+          swleaf_sb(:,:,:,ib,:), swveg_sb(:,ib,:), swvegsun_sb(:,ib,:), swvegsha_sb(:,ib,:), swsoi_sb(:,ib,:), albcan_sb(:,ib,:) &  ! output
+        )
+      end do
+
+      ! Combine sub-bands in the results and update mlcanopy_inst
+      ! All sums except albcan (weighted mean)
+      do ib = 1, numrad
+        ! Absorbed irradiances
+        swleaf(:,:,:,ib) = sum(swleaf_sb(:,:,:,ib,:), dim=4)
+        mlcanopy_inst%swveg(:,ib) = sum(swveg_sb(:,ib,:), dim=2)
+        mlcanopy_inst%swvegsun(:,ib) = sum(swvegsun_sb(:,ib,:), dim=2)
+        mlcanopy_inst%swvegsha(:,ib) = sum(swvegsha_sb(:,ib,:), dim=2)
+        mlcanopy_inst%swsoi(:,ib) = sum(swsoi_sb(:,ib,:), dim=2)
+
+        ! For albedo we recover and sum the reflected radiation and divide by the incoming (weighted average)
+        suminc_b = sum(swskyb_sb(:,ib,:) + swskyd_sb(:,ib,:), dim=2)  ! should be equal to `swskyb(:,ib) + swskyd(:,ib)`
+        where (suminc_b > 0)
+          mlcanopy_inst%albcan(:,ib) = sum(albcan_sb(:,ib,:) * (swskyb_sb(:,ib,:) + swskyd_sb(:,ib,:)), dim=2) / suminc_b
+        elsewhere
+          mlcanopy_inst%albcan(:,ib) = 0
+        end where
+      end do
+
     end if
 
     ! APAR per unit sunlit and shaded leaf area
@@ -904,18 +957,24 @@ contains
   end subroutine GoudriaanRadiation
 
   !-----------------------------------------------------------------------
-  subroutine TwoStreamRadiation (bounds, num_exposedvegp, filter_exposedvegp, &
-  omega, kb, avmu, betad, betab, surfalb_inst, mlcanopy_inst)
+  subroutine TwoStreamRadiation (&
+    bounds, num_exposedvegp, filter_exposedvegp, &
+    omega, kb, avmu, betad, betab, albsoib, albsoid, &
+    mlcanopy_inst, &
+    swskyb, swskyd, &
+    swleaf, swveg, swvegsun, swvegsha, swsoi, albcan &
+  )
     !
     ! !DESCRIPTION:
     ! Compute solar radiation transfer through canopy using the two-stream approximation
     !
     ! !USES:
-    use clm_varpar, only : numrad, isun, isha
+    use clm_varpar, only : isun, isha, nlevcan, nleaf
     use clm_varctl, only : iulog
     !
     ! Arguments
     implicit none
+    integer, parameter :: numrad = nsb  ! Sub-bands for a certain waveband
     type(bounds_type), intent(in) :: bounds
     integer,  intent(in) :: num_exposedvegp                       ! Number of non-snow-covered veg points in CLM patch filter
     integer,  intent(in) :: filter_exposedvegp(:)                 ! CLM patch filter for non-snow-covered vegetation
@@ -924,8 +983,13 @@ contains
     real(r8), intent(in) :: avmu(bounds%begp:bounds%endp)         ! Average inverse diffuse optical depth per unit leaf area
     real(r8), intent(in) :: betad(bounds%begp:bounds%endp,numrad) ! Upscatter parameter for diffuse radiation
     real(r8), intent(in) :: betab(bounds%begp:bounds%endp,numrad) ! Upscatter parameter for direct beam radiation
-    type(surfalb_type), intent(in) :: surfalb_inst
+    real(r8), intent(in) :: albsoib(bounds%begp:bounds%endp,numrad)  ! direct albedo of ground (soil)
+    real(r8), intent(in) :: albsoid(bounds%begp:bounds%endp,numrad)  ! diffuse
+    real(r8), dimension(bounds%begp:bounds%endp,1:numrad), intent(in) :: swskyb, swskyd
     type(mlcanopy_type), intent(inout) :: mlcanopy_inst
+    ! Output arguments
+    real(r8), dimension(bounds%begp:bounds%endp,1:nlevcan,1:nleaf,1:numrad), intent(out) :: swleaf
+    real(r8), dimension(bounds%begp:bounds%endp,1:numrad), intent(out) :: swveg, swvegsun, swvegsha, swsoi, albcan
     !
     ! Local variable declarations
     integer  :: f                       ! Filter index
@@ -978,19 +1042,8 @@ contains
     sai       => mlcanopy_inst%sai           , &  ! Stem area index of canopy (m2/m2)
     sumpai    => mlcanopy_inst%sumpai        , &  ! Cumulative plant area index (m2/m2)
     dpai      => mlcanopy_inst%dpai          , &  ! Layer plant area index (m2/m2)
-    swskyb    => mlcanopy_inst%swskyb        , &  ! Atmospheric direct beam solar radiation (W/m2)
-    swskyd    => mlcanopy_inst%swskyd        , &  ! Atmospheric diffuse solar radiation (W/m2)
     fracsun   => mlcanopy_inst%fracsun       , &  ! Sunlit fraction of canopy layer
-    fracsha   => mlcanopy_inst%fracsha       , &  ! Shaded fraction of canopy layer
-    albsoib   => surfalb_inst%albgrd_col     , &  ! Direct beam albedo of ground (soil)
-    albsoid   => surfalb_inst%albgri_col     , &  ! Diffuse albedo of ground (soil)
-                                                  ! *** Output ***
-    swleaf    => mlcanopy_inst%swleaf        , &  ! Leaf absorbed solar radiation (W/m2 leaf)
-    swveg     => mlcanopy_inst%swveg         , &  ! Absorbed solar radiation, vegetation (W/m2)
-    swvegsun  => mlcanopy_inst%swvegsun      , &  ! Absorbed solar radiation, sunlit canopy (W/m2)
-    swvegsha  => mlcanopy_inst%swvegsha      , &  ! Absorbed solar radiation, shaded canopy (W/m2)
-    swsoi     => mlcanopy_inst%swsoi         , &  ! Absorbed solar radiation, ground (W/m2)
-    albcan    => mlcanopy_inst%albcan          &  ! Albedo above canopy
+    fracsha   => mlcanopy_inst%fracsha        &  ! Shaded fraction of canopy layer
     )
 
     do ib = 1, numrad
