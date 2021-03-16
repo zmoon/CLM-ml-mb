@@ -274,7 +274,7 @@ contains
         if ( which == 'idf' ) y0 = y02
 
       case default
-        stop "invalid `which`: '" // which // "'. Valid options are: 'rl', 'tl'"
+        stop "invalid `which`. Valid options are: 'rl', 'tl'"
 
     end select
 
