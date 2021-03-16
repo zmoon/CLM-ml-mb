@@ -2,12 +2,12 @@ import datetime
 
 import numpy as np
 
-import run
+import clm_ml
 
 
 def get_fouts(validate=True):
     """Return list of the output file paths, doing some validation"""
-    fouts = list(run.OUT_DIR.glob("*.out"))
+    fouts = list(clm_ml.OUT_DIR.glob("*.out"))
     if validate:  # make sure we have the right number and that they are all recent
         now = datetime.datetime.now()
         assert len(fouts) == 3
@@ -26,5 +26,5 @@ def compare_fouts_to_orig(fouts=None):
     for fout in fouts:
         bn = fout.name
         new = np.loadtxt(fout)
-        orig = np.loadtxt(run.REPO_BASE / "test/data/output" / bn)
+        orig = np.loadtxt(clm_ml.REPO_BASE / "test/data/output" / bn)
         np.testing.assert_equal(new, orig)

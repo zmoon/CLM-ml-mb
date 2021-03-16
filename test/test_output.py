@@ -3,7 +3,7 @@ Test the output files -- generation (running the model), loading, etc.
 """
 import pytest
 
-import run
+import clm_ml
 import utils
 
 
@@ -12,8 +12,8 @@ def test_run_output_reg():
     """We test the outputs with default settings (1 sub-band per waveband)
     against original provided by Bonan as a regression test.
     """
-    run.build()  # in case of changes
-    run.run()  # takes ~ 10 s for the month
+    clm_ml.build()  # in case of changes
+    clm_ml.run()  # takes ~ 10 s for the month
     utils.compare_fouts_to_orig()
 
 
@@ -21,8 +21,8 @@ def test_run_output_reg():
 @pytest.mark.xfail(strict=True)
 def test_run_output_sb():
     """With 2 sub-bands, the output will be different."""
-    run.build()
-    run.run(nsb=2)
+    clm_ml.build()
+    clm_ml.run(nsb=2)
     utils.compare_fouts_to_orig()
 
 
@@ -31,4 +31,4 @@ def test_run_output_sb():
     ["flux", "aux", "profile"]
 )
 def test_load_out_ds(which):
-    run.load_out_ds(which)
+    clm_ml.load_out_ds(which)
