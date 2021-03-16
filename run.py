@@ -6,6 +6,8 @@ import os
 import subprocess
 from pathlib import Path
 
+import f90nml
+
 
 REPO_BASE = Path(__file__).parent
 EXE_DIR = REPO_BASE / "exe"
@@ -29,12 +31,16 @@ def build():
         subprocess.run(["make"], check=True)
 
 
-def run():
-    # Read nml to pass to the program
+def run(*, nsb=1):
+    # Read default nml
     with open(EXE_DIR / "namelists/nl.US-UMB.2006", "r") as f:
-        s_nml = f.read()
+        nml = f90nml.read(f)
+
+    # Update nml with user settings
+    nml["clm_inparm"]["nsb"] = nsb
 
     # Try to run
+    s_nml = str(nml) + "\n"  # complains without newline at the end
     with out_and_back(EXE_DIR):
         subprocess.run(["./prgm.exe"], input=s_nml, text=True, check=True)
 
