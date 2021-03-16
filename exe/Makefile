@@ -32,7 +32,7 @@ prgm = prgm.exe
 
 # cmplr = pgf90
 # cmplr = pgf90 -C -Minform=inform -Ktrap=fp
-cmplr = gfortran -fno-range-check -std=f2008 -ffree-line-length-none
+cmplr = gfortran-7 -fno-range-check -std=f2008 -ffree-line-length-none
 
 # Specify module files (that all other files use). Order matters, because some files
 # are used by other files in mods list
@@ -232,8 +232,8 @@ ${O}/SurfaceResistanceMod.o: ${bgp}/SurfaceResistanceMod.F90 $(mods)
 	$(cmplr) -c ${bgp}/SurfaceResistanceMod.F90
 	mv SurfaceResistanceMod.o ${O}
 
-${O}/MultibandSolarMod.o: ${can}/MultibandSolarMod.F90 $(mods)
-	$(cmplr) -c ${can}/MultibandSolarMod.F90
+${O}/MultibandSolarMod.o: ${can}/MultibandSolarMod.f90 $(mods)
+	$(cmplr) -c ${can}/MultibandSolarMod.f90
 	mv MultibandSolarMod.o ${O}
 
 ${O}/SolarRadiationMod.o: ${can}/SolarRadiationMod.F90 $(mods)
