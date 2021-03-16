@@ -1,5 +1,6 @@
 &clm_inparm
 light       = 1
+nsb         = 1
 gstyp       = 3
 use_colim   = .false.
 use_acclim  = .true.

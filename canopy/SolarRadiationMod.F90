@@ -26,9 +26,6 @@ module SolarRadiationMod
   private :: TwoStreamRadiation      ! Two-stream approximation radiative transfer
   !-----------------------------------------------------------------------
 
-  ! TODO: move to clm_varpar and make this a namelist input
-  integer, parameter :: nsb = 1  ! number of sub-bands to use (equal size for now)
-
 contains
 
   !-----------------------------------------------------------------------
@@ -41,7 +38,7 @@ contains
     ! !USES:
     use clm_varpar, only : numrad, nlevcan, isun, isha, ivis, nleaf
     use clm_varcon, only : pi => rpi
-    use clm_varctl, only : light
+    use clm_varctl, only : light, nsb
     !
     ! !ARGUMENTS:
     implicit none
@@ -97,7 +94,7 @@ contains
     real(r8) :: betab(bounds%begp:bounds%endp,1:numrad)    ! Upscatter parameter for direct beam radiation
 
     ! For sub-banding
-    ! Two-stream only so far
+    ! *Two-stream only so far*
     real(r8), dimension(nsb+1) :: wle_par, wle_nir
     real(r8), dimension(bounds%begp:bounds%endp, 1:numrad, 1:nsb) :: &  ! spectral variables with an additional sub-band dimension
       rho_sb, tau_sb, omega_sb, albsoib_sb, albsoid_sb, swskyb_sb, swskyd_sb, &  ! general
@@ -970,11 +967,10 @@ contains
     !
     ! !USES:
     use clm_varpar, only : isun, isha, nlevcan, nleaf
-    use clm_varctl, only : iulog
+    use clm_varctl, only : iulog, numrad => nsb
     !
     ! Arguments
     implicit none
-    integer, parameter :: numrad = nsb  ! Sub-bands for a certain waveband
     type(bounds_type), intent(in) :: bounds
     integer,  intent(in) :: num_exposedvegp                       ! Number of non-snow-covered veg points in CLM patch filter
     integer,  intent(in) :: filter_exposedvegp(:)                 ! CLM patch filter for non-snow-covered vegetation

@@ -36,7 +36,7 @@ contains
     logical :: use_hvap, use_init, run_spinup !!! Not needed for namelist !!!
     character(len=256) :: dirini              !!! Not needed for namelist !!!
 
-    namelist /clm_inparm/ light, gstyp, use_colim, use_acclim, use_clm45kn, &
+    namelist /clm_inparm/ light, nsb, gstyp, use_colim, use_acclim, use_clm45kn, &
        use_tower, use_init, use_hvap, tower, tower_yrbeg, tower_yrend, tower_month, &
        diratm, dirclm, dirini, dirout, run_spinup, turb_type
     !---------------------------------------------------------------------
@@ -49,6 +49,10 @@ contains
     ! Radiative transfer: 1 = Norman. 2 = Goudriaan. 3 = Two-stream
 
     light = 1
+
+    ! # of equal-width sub-bands to divide each waveband into when doing canopy RT
+
+    nsb = 1  ! results are equivalent to case of no sub-bands
 
     ! Stomatal conductance: Medlyn (0), Ball-Berry (1), or WUE optimization (2)
 

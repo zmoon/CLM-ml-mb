@@ -9,6 +9,7 @@ module clm_varctl
   implicit none
 
   integer :: light                  ! Radiative transfer: 1 = Norman. 2 = Goudriaan. 3 = Two-stream
+  integer :: nsb                    ! # of equal-width sub-bands to divide each waveband into when doing canopy RT
   integer :: gstyp                  ! Stomatal conductance: Medlyn (0), Ball-Berry (1), or WUE optimization (2)
   integer :: turb_type              ! Turbulence parameterization
   integer :: pad_type               ! Plant area density: No stem area (0) or use beta distribution (1) or uniform distribution (2)
