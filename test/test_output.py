@@ -34,7 +34,7 @@ def test_run_output_reg():
 
 @pytest.mark.parametrize(
     "which",
-    ["flux", "aux"]
+    ["flux", "aux", "profile"]
 )
 def test_load_out_ds(which):
     run.load_out_ds(which)
