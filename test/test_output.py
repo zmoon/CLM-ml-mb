@@ -1,35 +1,29 @@
 """
 Regression test -- check the output against original provided by Bonan
 """
-import datetime
-from pathlib import Path
-
-import numpy as np
 import pytest
 
 import run
+import utils
 
 
 @pytest.mark.slow
 def test_run_output_reg():
-    # Try to run the model (takes ~ 10 s for the month)
+    """We test the outputs with default settings against original provided by Bonan
+    as a regression test.
+    """
     run.build()  # in case of changes
-    run.run()
+    run.run()  # takes ~ 10 s for the month
+    utils.compare_fouts_to_orig()
 
-    # Check time stamps of the output files
-    now = datetime.datetime.now()
-    fouts = list(run.OUT_DIR.glob("*.out"))
-    assert len(fouts) == 3
-    for fout in fouts:
-        mtime = datetime.datetime.fromtimestamp(fout.stat().st_mtime)
-        assert (mtime - now).total_seconds() < 2
 
-    # Compare values to original provided by Bonan
-    for fout in fouts:
-        bn = fout.name
-        new = np.loadtxt(fout)
-        orig = np.loadtxt(run.REPO_BASE / "test/data/output" / bn)
-        np.testing.assert_equal(new, orig)
+@pytest.mark.slow
+@pytest.mark.xfail(strict=True)
+def test_run_output_sb():
+    """With 2 sub-bands, the output will be different."""
+    run.build()
+    run.run(nsb=2)
+    utils.compare_fouts_to_orig()
 
 
 @pytest.mark.parametrize(
