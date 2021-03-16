@@ -1,5 +1,5 @@
 """
-Regression test -- check the output against original provided by Bonan
+Test the output files -- generation (running the model), loading, etc.
 """
 import pytest
 
@@ -9,8 +9,8 @@ import utils
 
 @pytest.mark.slow
 def test_run_output_reg():
-    """We test the outputs with default settings against original provided by Bonan
-    as a regression test.
+    """We test the outputs with default settings (1 sub-band per waveband)
+    against original provided by Bonan as a regression test.
     """
     run.build()  # in case of changes
     run.run()  # takes ~ 10 s for the month
