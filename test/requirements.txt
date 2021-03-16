@@ -1,3 +1,5 @@
 numpy
 f90nml
+pandas
+xarray
 pytest

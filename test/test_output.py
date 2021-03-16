@@ -5,10 +5,12 @@ import datetime
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 import run
 
 
+@pytest.mark.slow
 def test_run_output_reg():
     # Try to run the model (takes ~ 10 s for the month)
     run.build()  # in case of changes
@@ -29,3 +31,10 @@ def test_run_output_reg():
         orig = np.loadtxt(run.REPO_BASE / "test/data/output" / bn)
         np.testing.assert_equal(new, orig)
 
+
+@pytest.mark.parametrize(
+    "which",
+    ["flux", "aux"]
+)
+def test_load_out_ds(which):
+    run.load_out_ds(which)
