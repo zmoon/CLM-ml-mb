@@ -1,5 +1,8 @@
-numpy
+# run
 f90nml
+netCDF4
+numpy
 pandas
 xarray
+# test
 pytest
