@@ -6,10 +6,12 @@
 # To remove obj files and mod files: type 'make clean'
 # ###############################################
  
-# LIB_NETCDF=     /usr/local/netcdf/lib
-# MOD_NETCDF=     /usr/local/netcdf/lib
-LIB_NETCDF = /usr/include
-MOD_NETCDF = /usr/include
+# LIB_NETCDF = /usr/local/netcdf/lib
+# MOD_NETCDF = /usr/local/netcdf/lib
+# LIB_NETCDF = /usr/include
+# MOD_NETCDF = /usr/include
+MOD_NETCDF := $$(nf-config --includedir)
+LIB_NETCDF := ${MOD_NETCDF}
 
 # Source code directories
  
