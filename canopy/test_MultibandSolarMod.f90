@@ -6,6 +6,8 @@ program test
   use MultibandSolarMod
   implicit none
 
+  real(r8), parameter :: pi = 4*atan(1._r8)
+
   !> Initial data, loaded from the files
   real(r8) :: &
     wl0_leaf(nwl_leaf), rl0(nwl_leaf), tl0(nwl_leaf), &
@@ -41,7 +43,8 @@ program test
   print *, 'L(6000 K) 0.5:1.5:', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)
   print *, 'L(6000 K) 0.3:5:', l_wl_plank_integ(6000._r8, 0.3_r8, 5._r8)
   print *, 'L(6000 K) 0.1:10:', l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
-  print *, '0.5:1.5 frac of total:', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
+  print *, '0.5:1.5 frac of total (0.1:10):', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
+  print *, '0.5:1.5 frac of total (S-B):', pi*l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/(5.6704e-8_r8 * 6000._r8**4)
   print *, '  should be ~ 0.6168'
   print *, 'multiple bounds (0.4:0.5, 0.5:0.6):', l_wl_plank_integ(6000._r8, [0.4_r8, 0.5_r8], [0.5_r8, 0.6_r8])
   stop
