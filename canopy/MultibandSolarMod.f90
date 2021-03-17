@@ -35,9 +35,9 @@ module MultibandSolarMod
     refspecbasepath = "../canopy/"  ! when running CLM-ml
 
   ! Wavelength bounds for some common bands (um)
-  real(r8), dimension(2) :: &
-    wlb_par = [0.4, 0.7], &
-    wlb_nir = [0.7, 2.5]  ! no use going further since don't have leaf/soil data
+  real(r8), dimension(2), parameter :: &
+    wlb_par = [0.4_r8, 0.7_r8], &
+    wlb_nir = [0.7_r8, 2.5_r8]  ! no use going further in wavelength since don't have leaf/soil data
 
 
 contains

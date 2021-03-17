@@ -194,7 +194,20 @@ contains
       end do
     end do
     ! print *, 'is sub-banding working? orig:', rho(1, 1), 'new:', rho_sb(1, 1, :)
-    
+    if ( any(omega_sb > 1) ) then
+      print *, 'orig rho:', rho
+      print *, 'new rho:', rho_sb(:,1,:), rho_sb(:,2,:)
+      print *, 'orig tau:', tau
+      print *, 'new tau:', tau_sb(:,1,:), tau_sb(:,2,:)
+      print *, 'orig omega:', rho + tau
+      print *, 'new omega:', omega_sb(:,1,:), omega_sb(:,2,:)
+      print *, 'wlb_par', wlb_par
+      print *, 'wle_par', wle_par
+      print *, 'wlb_nir', wlb_nir
+      print *, 'wle_nir', wle_nir
+      stop 'found new omega > 1'
+    end if
+
     !---------------------------------------------------------------------
     ! Direct beam extinction coefficient
     !---------------------------------------------------------------------
@@ -462,9 +475,22 @@ contains
         elsewhere
           mlcanopy_inst%albcan(:,ib) = 0
         end where
+        ! do f = 1, num_exposedvegp
+        !   p = filter_exposedvegp(f)
+        !   ! suminc_b = sum(swskyb_sb(:,ib,:) + swskyd_sb(:,ib,:))
+        !   suminc_b = swskyb(f,ib) + swskyd(f,ib)
+        !   if ( suminc_b > 1.0e-10_r8 ) then
+        !     mlcanopy_inst%albcan(f,ib) = sum(albcan_sb(f,ib,:) * (swskyb_sb(f,ib,:) + swskyd_sb(f,ib,:))) / suminc_b
+        !   else
+        !     mlcanopy_inst%albcan(f,ib) = 0
+        !   end if
+        ! end do
+
       end do
 
     end if
+    ! Check albedo
+    if ( any(mlcanopy_inst%albcan > 1) ) stop 'albcan > 1 found'
 
     ! APAR per unit sunlit and shaded leaf area
 
@@ -1050,6 +1076,15 @@ contains
           !----------------------------------------------------------------
           ! Canopy fluxes using cumulative lai+sai
           !----------------------------------------------------------------
+
+          ! ! Ignore very small incoming light
+          ! if ( swskyb(p,ib) < 1.0e-10_r8 .or. swskyd(p,ib) < 1.0e-10_r8 ) then
+          !   ! print *, 'small incoming'
+          !   swskyb(p,ib) = 0
+          !   swskyd(p,ib) = 0
+          ! else
+          !   ! print *, 'not small incoming'
+          ! end if
 
           ! Common terms
 
