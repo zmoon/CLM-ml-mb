@@ -28,6 +28,14 @@ program test
 
   character(len=40) :: fmt1, fmt2
 
+  !> Planck radiance
+  print *, '!> Planck radiance L'
+  print *, 'h, c, k', h, c, k
+  print *, 'L(6000 K, 1 um):', l_wl_planck(6000._r8, 1._r8) / 1.e9 / 1.e4
+  print *, '  should be: ~ 1.191 W/(sr m2)/m'
+  print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_r8, [0.5_r8, 1._r8, 1.5_r8]) / 1.e9 / 1.e4
+  stop
+
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
   print *, "!> leaf spectrum: wavelength (um), leaf element reflectance, transmittance"

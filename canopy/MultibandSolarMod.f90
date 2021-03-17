@@ -39,8 +39,25 @@ module MultibandSolarMod
     wlb_par = [0.4_r8, 0.7_r8], &
     wlb_nir = [0.7_r8, 2.5_r8]  ! no use going further in wavelength since don't have leaf/soil data
 
+  ! Constants for Planck
+  real(r8), parameter :: &
+    h = 6.62607e-34_r8, &  ! Planck constant (J s)
+    c = 2.99792e8_r8, &  ! speed of light (m s-1)
+    k = 1.38065e-23_r8  ! Boltzmann constant (J K-1)
+
 
 contains
+
+
+  !> Compute Planck radiance (T, wl)
+  pure elemental real(r8) function l_wl_planck(T_K, wl_um) result(l)
+    real(r8), intent(in) :: T_K, wl_um
+    real(r8) :: wl
+    wl = wl_um * 1.0e-6_r8  ! -> m
+    l = (2 * h * c**2) / ( &
+      wl**5 * (exp(h * c / (wl * k * T_K)) - 1) &
+    )
+  end function l_wl_planck
 
 
   !> Generate equal-width wavelength sub-bands for a certain spectral region
