@@ -68,7 +68,12 @@ objs = $(mods) $(src1) $(src2)
 # Compile code into an executable file defined by "prgm"
 
 $(prgm): $(objs)
-	$(cmplr) -o $(prgm) $(objs) -L$(LIB_NETCDF) -lnetcdff -lblas -llapack -lm -L/usr/lib64
+ifeq ($(ACI),1)  # ACI's libnetcdff needs more supporting libs (not all covered by `nf-config --flibs`)
+	$(cmplr) -o $(prgm) $(objs) \
+	-lhdf5 -lhdf5_hl -lsz -lnetcdf -lnetcdff -lblas -llapack -lm
+else
+	$(cmplr) -o $(prgm) $(objs) -L$(LIB_NETCDF) -lnetcdff -lblas -llapack -lm
+endif
 
 # mods files first, because they are used by other files
 
