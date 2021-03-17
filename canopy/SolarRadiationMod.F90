@@ -107,6 +107,7 @@ contains
       swsoi_sb(bounds%begp:bounds%endp,1:numrad,1:nsb), &
       albcan_sb(bounds%begp:bounds%endp,1:numrad,1:nsb)
     real(r8) :: suminc_b(bounds%begp:bounds%endp)  ! local helper variables
+    logical, parameter :: sb_weight = .true.
 
     !---------------------------------------------------------------------
 
@@ -174,17 +175,17 @@ contains
         p = filter_exposedvegp(f)
         if ( ib == 1 ) then  ! PAR
           if ( ib /= ivis ) stop 'ib 1 should be ivis (PAR) band'
-          rho_sb(p,ib,:) = distribute(wlb_par, rho(p,ib), wle_par, 'rl')
-          tau_sb(p,ib,:) = distribute(wlb_par, tau(p,ib), wle_par, 'tl')
-          albsoib_sb(p,ib,:) = distribute(wlb_par, albsoib(p,ib), wle_par, 'rs')
-          albsoid_sb(p,ib,:) = distribute(wlb_par, albsoid(p,ib), wle_par, 'rs')
+          rho_sb(p,ib,:) = distribute(wlb_par, rho(p,ib), wle_par, 'rl', weight=sb_weight)
+          tau_sb(p,ib,:) = distribute(wlb_par, tau(p,ib), wle_par, 'tl', weight=sb_weight)
+          albsoib_sb(p,ib,:) = distribute(wlb_par, albsoib(p,ib), wle_par, 'rs', weight=sb_weight)
+          albsoid_sb(p,ib,:) = distribute(wlb_par, albsoid(p,ib), wle_par, 'rs', weight=sb_weight)
           swskyb_sb(p,ib,:) = distribute(wlb_par, swskyb(p,ib), wle_par, 'idr')
           swskyd_sb(p,ib,:) = distribute(wlb_par, swskyd(p,ib), wle_par, 'idf')
         else if ( ib == 2 ) then  ! NIR
-          rho_sb(p,ib,:) = distribute(wlb_nir, rho(p,ib), wle_nir, 'rl')
-          tau_sb(p,ib,:) = distribute(wlb_nir, tau(p,ib), wle_nir, 'tl')
-          albsoib_sb(p,ib,:) = distribute(wlb_nir, albsoib(p,ib), wle_nir, 'rs')
-          albsoid_sb(p,ib,:) = distribute(wlb_nir, albsoid(p,ib), wle_nir, 'rs')
+          rho_sb(p,ib,:) = distribute(wlb_nir, rho(p,ib), wle_nir, 'rl', weight=sb_weight)
+          tau_sb(p,ib,:) = distribute(wlb_nir, tau(p,ib), wle_nir, 'tl', weight=sb_weight)
+          albsoib_sb(p,ib,:) = distribute(wlb_nir, albsoib(p,ib), wle_nir, 'rs', weight=sb_weight)
+          albsoid_sb(p,ib,:) = distribute(wlb_nir, albsoid(p,ib), wle_nir, 'rs', weight=sb_weight)
           swskyb_sb(p,ib,:) = distribute(wlb_nir, swskyb(p,ib), wle_nir, 'idr')
           swskyd_sb(p,ib,:) = distribute(wlb_nir, swskyd(p,ib), wle_nir, 'idf')
         else
