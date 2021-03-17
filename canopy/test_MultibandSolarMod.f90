@@ -34,6 +34,16 @@ program test
   print *, 'L(6000 K, 1 um):', l_wl_planck(6000._r8, 1._r8) / 1.e9 / 1.e4
   print *, '  should be: ~ 1.191 W/(sr m2)/m'
   print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_r8, [0.5_r8, 1._r8, 1.5_r8]) / 1.e9 / 1.e4
+
+  !> Planck radiance definite integrals
+  print *
+  print *, '!> Planck radiance definite integrals'
+  print *, 'L(6000 K) 0.5:1.5:', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)
+  print *, 'L(6000 K) 0.3:5:', l_wl_plank_integ(6000._r8, 0.3_r8, 5._r8)
+  print *, 'L(6000 K) 0.1:10:', l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
+  print *, '0.5:1.5 frac of total:', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
+  print *, '  should be ~ 0.6168'
+  print *, 'multiple bounds (0.4:0.5, 0.5:0.6):', l_wl_plank_integ(6000._r8, [0.4_r8, 0.5_r8], [0.5_r8, 0.6_r8])
   stop
 
   !> Check that leaf was loaded correctly

@@ -53,11 +53,26 @@ contains
   pure elemental real(r8) function l_wl_planck(T_K, wl_um) result(l)
     real(r8), intent(in) :: T_K, wl_um
     real(r8) :: wl
-    wl = wl_um * 1.0e-6_r8  ! -> m
+    wl = wl_um * 1.e-6_r8  ! -> m
     l = (2 * h * c**2) / ( &
       wl**5 * (exp(h * c / (wl * k * T_K)) - 1) &
     )
   end function l_wl_planck
+
+
+  !> Estimate the definite integral of Planck radiance over a region
+  !> Currently using trapz but might be better to define and use a simps routine
+  pure elemental real(r8) function l_wl_plank_integ(T_K, wla_um, wlb_um) result(res)
+    real(r8), intent(in) :: T_K, wla_um, wlb_um
+    integer, parameter :: n = 200  ! discrete points in the trapz
+    real(r8) :: wl_um(n), l(n)
+    integer :: i
+    do i = 1, n  ! linspace
+      wl_um(i) = wla_um + (wlb_um - wla_um) * (i - 1) / (n - 1)
+    end do
+    l = l_wl_planck(T_K, wl_um)
+    res = trapz(wl_um * 1.e-6_r8, l)
+  end function l_wl_plank_integ
 
 
   !> Generate equal-width wavelength sub-bands for a certain spectral region
