@@ -112,7 +112,7 @@ program test
   print fmt1, 'idf', idfi, '->', idf
 
   !> Distribute one spectrum at once
-  print *,
+  print *
   print *, "!> distribute one spectrum at once (should be same result as above)"
   print fmt1, 'rl', rli, '->', distribute(wlbi, rli, wle, 'rl')
   print fmt1, 'tl', tli, '->', distribute(wlbi, tli, wle, 'tl')
