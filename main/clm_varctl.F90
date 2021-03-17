@@ -34,4 +34,6 @@ module clm_varctl
 
   real(r8) :: dtime_sub             ! Model sub-timestep (s)
 
+  character(len=256) :: fout_name_suffix  ! Suffix for output file names (right before extension)
+
 end module clm_varctl

@@ -142,13 +142,14 @@ def build():
         subprocess.run(["make"], check=True)
 
 
-def run(*, nsb=1):
+def run(*, nsb=1, fout_name_suffix=""):
     # Read default nml
     with open(EXE_DIR / "namelists/nl.US-UMB.2006", "r") as f:
         nml = f90nml.read(f)
 
     # Update nml with user settings
     nml["clm_inparm"]["nsb"] = nsb
+    nml["clm_inparm"]["fout_name_suffix"] = fout_name_suffix
 
     # Try to run
     s_nml = str(nml) + "\n"  # complains without newline at the end

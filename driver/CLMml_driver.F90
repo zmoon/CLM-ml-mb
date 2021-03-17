@@ -30,7 +30,7 @@ contains
     ! Model driver
     !
     ! !USES:
-    use clm_varctl, only : iulog, ntim, diratm, dirclm, dirout
+    use clm_varctl, only : iulog, ntim, diratm, dirclm, dirout, fout_name_suffix
     use clm_time_manager
     use TowerDataMod, only : tower_id, tower_num, tower_yrbeg, tower_yrend, tower_month, tower_time
     use clm_varorb, only : eccen, mvelpp, lambm0, obliqr
@@ -175,17 +175,17 @@ contains
        !---------------------------------------------------------------
 
        print *, "  opening model output files ..."
-       write (ext,'(a6,"_",i4.4,"-",i2.2,"_flux.out")') tower_id(it),iy,mon
+       write (ext,'(a6,"_",i4.4,"-",i2.2,a,"_flux.out")') tower_id(it),iy,mon,trim(fout_name_suffix)
        fout1 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
        nout1 = shr_file_getUnit()
        open (unit=nout1, file=trim(fout1), action="write")
 
-       write (ext,'(a6,"_",i4.4,"-",i2.2,"_aux.out")') tower_id(it),iy,mon
+       write (ext,'(a6,"_",i4.4,"-",i2.2,a,"_aux.out")') tower_id(it),iy,mon,trim(fout_name_suffix)
        fout2 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
        nout2 = shr_file_getUnit()
        open (unit=nout2, file=trim(fout2), action="write")
 
-       write (ext,'(a6,"_",i4.4,"-",i2.2,"_profile.out")') tower_id(it),iy,mon
+       write (ext,'(a6,"_",i4.4,"-",i2.2,a,"_profile.out")') tower_id(it),iy,mon,trim(fout_name_suffix)
        fout3 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
        nout3 = shr_file_getUnit()
        open (unit=nout3, file=trim(fout3), action="write")
