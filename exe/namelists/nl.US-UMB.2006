@@ -18,5 +18,5 @@ diratm      = '/home/bonan/dev/mlcan/tower-forcing/'
 dirclm      = '/home/bonan/dev/mlcan/clm4_5/'
 dirini      = '/home/bonan/dev/mlcan/model-init/'
 dirout      = '/project/bgc01/bonan/flux-tower/output/'
-fout_name_suffix = ''
+subdir      = ''
 /

@@ -38,7 +38,7 @@ contains
 
     namelist /clm_inparm/ light, nsb, gstyp, use_colim, use_acclim, use_clm45kn, &
        use_tower, use_init, use_hvap, tower, tower_yrbeg, tower_yrend, tower_month, &
-       diratm, dirclm, dirini, dirout, run_spinup, turb_type, fout_name_suffix
+       diratm, dirclm, dirini, dirout, run_spinup, turb_type, subdir
     !---------------------------------------------------------------------
 
     !---------------------------------------------------------------------
@@ -189,6 +189,10 @@ contains
     diratm = '../tower-forcing/'
     dirclm = '../clm4_5/'
     dirout = '../output/'
+
+    if ( len(trim(subdir)) > 0 ) then
+      if ( subdir(len(trim(subdir)):len(trim(subdir))) /= '/' ) stop '`subdir` must have trailing `/`'
+    end if
 
     !---------------------------------------------------------------------
     ! Match tower site to TowerDataMod arrays
