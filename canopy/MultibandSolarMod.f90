@@ -276,18 +276,24 @@ contains
 
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
-  function distribute(wlbi, yi, wle, which) result(y)
+  function distribute(wlbi, yi, wle, which, weight) result(y)
     real(r8), intent(in) :: wlbi(2), yi, wle(:)
     character(len=*), intent(in) :: which
+    logical, intent(in), optional :: weight
     real(r8), allocatable :: y(:)
 
-    real(r8), allocatable :: wl0(:), y0(:), y02(:), dwl(:)
+    real(r8), allocatable :: wl0(:), y0(:), y02(:), dwl(:), w(:)
     integer :: n
 
     n = ubound(wle, dim=1)
     if ( wle(1) /= wle(1) .or. wle(n) /= wlbi(2) ) stop 'wle edges should match orig band'
-    allocate(y(n-1), dwl(n-1))
+    allocate(y(n-1), dwl(n-1), w(n-1))
     dwl = wle(2:n) - wle(1:n-1)
+
+    w = 1  ! default
+    if ( present(weight) ) then
+      if ( weight ) w = l_wl_plank_integ(6000._r8, wle(1:n-1), wle(2:n))
+    end if
 
     ! Load reference spectrum
     select case (which)
@@ -320,7 +326,10 @@ contains
         y = y * yi / sum(y)
 
       case default
-        y = y * yi / (sum(y * dwl) / (wle(n) - wle(1)))
+        ! Weighted average
+        ! Weighting by waveband width and, if activated, solar intensity (6000 K Planck)
+        w = w * dwl
+        y = y * yi / sum(y * w) * sum(w)
 
     end select
   end function distribute

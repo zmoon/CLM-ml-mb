@@ -47,10 +47,10 @@ program test
   print *, '0.5:1.5 frac of total (S-B):', pi*l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/(5.6704e-8_r8 * 6000._r8**4)
   print *, '  should be ~ 0.6168'
   print *, 'multiple bounds (0.4:0.5, 0.5:0.6):', l_wl_plank_integ(6000._r8, [0.4_r8, 0.5_r8], [0.5_r8, 0.6_r8])
-  stop
 
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
+  print *
   print *, "!> leaf spectrum: wavelength (um), leaf element reflectance, transmittance"
   do i = 1, nwl_print
     print *, i, wl0_leaf(i), rl0(i), tl0(i)
@@ -116,12 +116,14 @@ program test
 
   !> Full distribute-rad routine
   wlbi = [0.4, 0.7]  ! (um) PAR band edges
+  ! wlbi = [0.7, 2.5]  ! NIR
   rli = 0.2
   tli = 0.15
   rsi = 0.25
   idri = 500
   idfi = 100
-  wle = [0.4, 0.5, 0.6, 0.7]  ! new band edges
+  wle = [0.4, 0.5, 0.6, 0.7]  ! new band edges for PAR region
+  ! wle = [0.7, 1.0, 1.5, 2.5]  ! NIR
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle, wl, dwl, rl, tl, rs, idr, idf)
   print *
   print *, "!> distribute rad -- to 3 bands"
@@ -136,14 +138,16 @@ program test
   print *
   print *, "!> distribute one spectrum at once (should be same result as above)"
   print fmt1, 'rl', rli, '->', distribute(wlbi, rli, wle, 'rl')
+  print fmt1, 'rlw', rli, '->', distribute(wlbi, rli, wle, 'rl', weight=.true.)
   print fmt1, 'tl', tli, '->', distribute(wlbi, tli, wle, 'tl')
+  print fmt1, 'tlw', tli, '->', distribute(wlbi, tli, wle, 'tl', weight=.true.)
   print fmt1, 'rs', rsi, '->', distribute(wlbi, rsi, wle, 'rs')
   print fmt1, 'idr', idri, '->', distribute(wlbi, idri, wle, 'idr')
   print fmt1, 'idf', idfi, '->', distribute(wlbi, idfi, wle, 'idf')
 
 
   !> Check that if we have only one bin we get the same as what we put in
-  wle2 = [0.4, 0.7]
+  wle2 = wlbi
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle2, wl2, dwl2, rl2, tl2, rs2, idr2, idf2)
   print *
   print *, "!> distribute rad -- one band only (results should be same as input, though size-1 array)"
