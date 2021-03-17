@@ -25,6 +25,7 @@ contains
     !
     ! !USES:
     use clm_varctl
+    use clm_varpar, only : verbose
     use TowerDataMod, only : ntower, tower_id, tower_num, tower_yrbeg, tower_yrend, tower_month
     ! !ARGUMENTS:
     implicit none
@@ -38,7 +39,7 @@ contains
 
     namelist /clm_inparm/ light, nsb, gstyp, use_colim, use_acclim, use_clm45kn, &
        use_tower, use_init, use_hvap, tower, tower_yrbeg, tower_yrend, tower_month, &
-       diratm, dirclm, dirini, dirout, run_spinup, turb_type
+       diratm, dirclm, dirini, dirout, run_spinup, turb_type, subdir
     !---------------------------------------------------------------------
 
     !---------------------------------------------------------------------
@@ -121,11 +122,10 @@ contains
 
     ! Read values from namelist file
 
-    print *, '  reading nml from stdin or waiting for nml to be input on cl ...'
+    if ( verbose ) print *, '  reading nml from stdin or waiting for nml to be input on cl ...'
     read (5, clm_inparm)  ! stdin
 
     ! Bit of validation
-    print *, tower_yrbeg, tower_yrend
     if ( tower_yrbeg == 0 .or. tower_yrend == 0 ) stop 'beg/end years not set (possibly nml not directed to the program)'
 
     ! (Namelist overrides currently follow)
@@ -189,6 +189,10 @@ contains
     diratm = '../tower-forcing/'
     dirclm = '../clm4_5/'
     dirout = '../output/'
+
+    if ( len(trim(subdir)) > 0 ) then
+      if ( subdir(len(trim(subdir)):len(trim(subdir))) /= '/' ) stop '`subdir` must have trailing `/`'
+    end if
 
     !---------------------------------------------------------------------
     ! Match tower site to TowerDataMod arrays

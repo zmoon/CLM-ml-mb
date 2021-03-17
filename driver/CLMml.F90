@@ -6,6 +6,7 @@ program CLMml
   use clm_instMod, only : clm_instInit
   use filterMod, only : filter, allocFilters
   use CLMml_driver, only : CLMml_drv
+  use clm_varpar, only : verbose
 
   type(bounds_type) :: bounds
 
@@ -16,24 +17,24 @@ program CLMml
   ! that a grid cell has one land unit with one column and one patch. It
   ! processes a single grid cell.
 
-  print *, "Getting CLM g/l/c/p ..."
+  if ( verbose ) print *, "Getting CLM g/l/c/p ..."
   call get_clump_bounds (bounds)
 
   ! Initialize instances of all derived types
 
-  print *, "Initializing derived types ..."
+  if ( verbose ) print *, "Initializing derived types ..."
   call col%Init (bounds%begc, bounds%endc)
   call patch%Init (bounds%begp, bounds%endp)
   call clm_instInit (bounds)
 
   ! Allocate filters
 
-  print *, "Allocating filters ..."
+  if ( verbose ) print *, "Allocating filters ..."
   call allocFilters (filter, bounds%begp, bounds%endp, bounds%begc, bounds%endc)
 
   ! Run model
 
-  print *, "Running the model ..."
+  if ( verbose ) print *, "Running the model ..."
   call CLMml_drv (bounds)
 
 end program CLMml

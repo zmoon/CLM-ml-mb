@@ -30,7 +30,8 @@ contains
     ! Model driver
     !
     ! !USES:
-    use clm_varctl, only : iulog, ntim, diratm, dirclm, dirout
+    use clm_varctl, only : iulog, ntim, diratm, dirclm, dirout, subdir
+    use clm_varpar, only : verbose
     use clm_time_manager
     use TowerDataMod, only : tower_id, tower_num, tower_yrbeg, tower_yrend, tower_month, tower_time
     use clm_varorb, only : eccen, mvelpp, lambm0, obliqr
@@ -67,7 +68,7 @@ contains
 
     ! Initialize run control variables
 
-    print *, "  initializing run control variables ..."
+    if ( verbose ) print *, "  initializing run control variables ..."
     call control
 
     ! Process the tower site (it) and year (iy)
@@ -91,7 +92,7 @@ contains
        call get_curr_date (yr, mon, day, curr_date_tod)
 
       !  write (iulog,*) 'Processing: ',tower_id(it),yr,mon
-       print *, '  processing: ',tower_id(it),yr,mon
+       if ( verbose ) print *, '  processing: ',tower_id(it),yr,mon
 
        !---------------------------------------------------------------
        ! Number of time steps to execute
@@ -121,7 +122,7 @@ contains
        ! Initialize variables
        !---------------------------------------------------------------
 
-       print *, "  initializing variables ..."
+       if ( verbose ) print *, "  initializing variables ..."
        call initialize (it, iy, bounds%begp, bounds%endp, bounds%begc, bounds%endc, &
        soilstate_inst, waterstate_inst, temperature_inst, surfalb_inst, mlcanopy_inst)
 
@@ -131,19 +132,19 @@ contains
        ! point. This grid point has one CLM soil column with one CLM patch.
        !---------------------------------------------------------------
 
-       print *, "  building patch/column mapping for g/l/c/p ..."
+       if ( verbose ) print *, "  building patch/column mapping for g/l/c/p ..."
        call clm_subgrid()
 
        ! Build CLM filters to process grid points
 
-       print *, "  building CLM filters ..."
+       if ( verbose ) print *, "  building CLM filters ..."
        call setFilters (filter)
 
        !---------------------------------------------------------------
        ! Read tower meteorology data once to get acclimation temperature
        !---------------------------------------------------------------
 
-       print *, "  reading tower met data ..."
+       if ( verbose ) print *, "  reading tower met data ..."
        call init_acclim (it, iy, mon, bounds%begp, bounds%endp, atm2lnd_inst, &
        temperature_inst, mlcanopy_inst)
 
@@ -151,7 +152,7 @@ contains
        ! Orbital parameters for this year
        !---------------------------------------------------------------
 
-       print *, "  calculating orbital params ..."
+       if ( verbose ) print *, "  calculating orbital params ..."
        call shr_orb_params (iy, eccen, obliq, mvelp, obliqr, lambm0, mvelpp)
 
        !---------------------------------------------------------------
@@ -174,19 +175,19 @@ contains
        ! Open model output files
        !---------------------------------------------------------------
 
-       print *, "  opening model output files ..."
+       if ( verbose ) print *, "  opening model output files ..."
        write (ext,'(a6,"_",i4.4,"-",i2.2,"_flux.out")') tower_id(it),iy,mon
-       fout1 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
+       fout1 = dirout(1:len(trim(dirout)))//trim(subdir)//ext(1:len(trim(ext)))
        nout1 = shr_file_getUnit()
        open (unit=nout1, file=trim(fout1), action="write")
 
        write (ext,'(a6,"_",i4.4,"-",i2.2,"_aux.out")') tower_id(it),iy,mon
-       fout2 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
+       fout2 = dirout(1:len(trim(dirout)))//trim(subdir)//ext(1:len(trim(ext)))
        nout2 = shr_file_getUnit()
        open (unit=nout2, file=trim(fout2), action="write")
 
        write (ext,'(a6,"_",i4.4,"-",i2.2,"_profile.out")') tower_id(it),iy,mon
-       fout3 = dirout(1:len(trim(dirout)))//ext(1:len(trim(ext)))
+       fout3 = dirout(1:len(trim(dirout)))//trim(subdir)//ext(1:len(trim(ext)))
        nout3 = shr_file_getUnit()
        open (unit=nout3, file=trim(fout3), action="write")
 
@@ -194,7 +195,7 @@ contains
        ! Time stepping loop
        !---------------------------------------------------------------
 
-       print *, "  starting the time loop ..."
+       if ( verbose ) print *, "  entering the time loop ..."
        do istep = 1, ntim
 
           ! Get current date, time, and calendar day. These are for itim (at

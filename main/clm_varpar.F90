@@ -30,4 +30,6 @@ module clm_varpar
   integer, parameter :: isun = 1              ! Sunlit leaf index
   integer, parameter :: isha = 2              ! Shaded leaf index
 
+  logical, parameter :: verbose = .false.
+
 end module clm_varpar

@@ -71,58 +71,47 @@ OUT_VARS = {
 }
 
 
-def _load_out_ds_ts(which):
-    # Load data and create series of times
-    data = np.loadtxt(OUT_DIR / f"US-UMB_2006-07_{which}.out")
-    assert data.shape[1] == len(OUT_VARS[which])
-    t = pd.date_range('2006-07-01', '2006-08-01', freq="H", closed="right")
-    assert data.shape[0] == t.size
-
-    # Create and return ds
-    return xr.Dataset(
-        coords={
-            "t": ("t", t),
-        },
-        data_vars={
-            info[0]: ('t', col, {'long_name': info[1], 'units': info[2]})
-            for info, col in zip(OUT_VARS[which], data.T)
-        },
-    )
-
-
-def _load_out_ds_prof(which):
-    # Load data and create series of times
-    data = np.loadtxt(OUT_DIR / f"US-UMB_2006-07_{which}.out")
-    assert data.shape[1] == len(OUT_VARS[which])
-    t = pd.date_range('2006-07-01', '2006-08-01', freq="H", closed="right")
-    nz = np.unique(data[:,1]).size
-    nt = t.size
-    assert data.shape[0] == nt * nz
-
-    # Create and return ds
-    z = data[:nz,1]
-    return xr.Dataset(
-        coords={
-            "t": ("t", t),
-            "z": ("z", z, {"long_name": "Height", "units": "m"}),
-        },
-        data_vars={
-            info[0]: (('t', 'z'), col.reshape((nt, nz)), {'long_name': info[1], 'units': info[2]})
-            for info, col in zip(OUT_VARS[which], data.T)
-        },
-    )
-
-
-def load_out_ds(which="flux"):
+def load_out_ds(which="flux", *, subdir=""):
     # Note: currently hard-coded to only work for 2006-07, but that's the only we can run anyway currently...
     
     if which not in OUT_VARS:
         raise ValueError("invalid `which`")
 
-    if which in ("flux", "aux"):
-        return _load_out_ds_ts(which)
-    else:
-        return _load_out_ds_prof(which)
+    # Load data
+    data = np.loadtxt(OUT_DIR / subdir / f"US-UMB_2006-07_{which}.out")
+    assert data.shape[1] == len(OUT_VARS[which])
+
+    # Construct times
+    t = pd.date_range('2006-07-01', '2006-08-01', freq="H", closed="right")
+    nt = t.size
+
+    # Create Dataset
+    if which in ("flux", "aux"):  # time series only
+        assert data.shape[0] == t.size
+        return xr.Dataset(
+            coords={
+                "t": ("t", t),
+            },
+            data_vars={
+                info[0]: ('t', col, {'long_name': info[1], 'units': info[2]})
+                for info, col in zip(OUT_VARS[which], data.T)
+            },
+        )
+
+    else:  # time series of vertical profiles
+        nz = np.unique(data[:,1]).size
+        assert data.shape[0] == nt * nz
+        z = data[:nz,1]
+        return xr.Dataset(
+            coords={
+                "t": ("t", t),
+                "z": ("z", z, {"long_name": "Height", "units": "m"}),
+            },
+            data_vars={
+                info[0]: (('t', 'z'), col.reshape((nt, nz)), {'long_name': info[1], 'units': info[2]})
+                for info, col in zip(OUT_VARS[which], data.T)
+            },
+        )
 
 
 @contextlib.contextmanager
@@ -142,13 +131,18 @@ def build():
         subprocess.run(["make"], check=True)
 
 
-def run(*, nsb=1):
+def run(*, nsb=1, subdir=""):
     # Read default nml
     with open(EXE_DIR / "namelists/nl.US-UMB.2006", "r") as f:
         nml = f90nml.read(f)
 
     # Update nml with user settings
     nml["clm_inparm"]["nsb"] = nsb
+    nml["clm_inparm"]["subdir"] = subdir
+
+    # Create output subdir if it doesn't exist
+    p_subdir = OUT_DIR / subdir
+    p_subdir.mkdir(exist_ok=True)
 
     # Try to run
     s_nml = str(nml) + "\n"  # complains without newline at the end
