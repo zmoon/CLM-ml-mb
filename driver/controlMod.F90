@@ -25,6 +25,7 @@ contains
     !
     ! !USES:
     use clm_varctl
+    use clm_varpar, only : verbose
     use TowerDataMod, only : ntower, tower_id, tower_num, tower_yrbeg, tower_yrend, tower_month
     ! !ARGUMENTS:
     implicit none
@@ -121,11 +122,10 @@ contains
 
     ! Read values from namelist file
 
-    print *, '  reading nml from stdin or waiting for nml to be input on cl ...'
+    if ( verbose ) print *, '  reading nml from stdin or waiting for nml to be input on cl ...'
     read (5, clm_inparm)  ! stdin
 
     ! Bit of validation
-    print *, tower_yrbeg, tower_yrend
     if ( tower_yrbeg == 0 .or. tower_yrend == 0 ) stop 'beg/end years not set (possibly nml not directed to the program)'
 
     ! (Namelist overrides currently follow)
