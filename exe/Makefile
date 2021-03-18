@@ -55,7 +55,7 @@ src1 = ${O}/SurfaceAlbedoMod.o ${O}/clm_instMod.o ${O}/controlMod.o \
 	${O}/BandDiagonalMod.o ${O}/SoilTemperatureMod.o \
 	${O}/LeafBoundaryLayerMod.o ${O}/LeafPhotosynthesisMod.o ${O}/LeafTemperatureMod.o \
 	${O}/StomataOptimizationMod.o ${O}/LeafFluxesMod.o ${O}/LongwaveRadiationMod.o ${O}/PlantHydraulicsMod.o \
-	${O}/SoilFluxesMultilayerMod.o ${O}/MultibandSolarMod.o ${O}/SolarRadiationMod.o ${O}/SurfaceResistanceMod.o \
+	${O}/SoilFluxesMultilayerMod.o ${O}/MultibandSolarDataMod.o ${O}/MultibandSolarMod.o ${O}/SolarRadiationMod.o ${O}/SurfaceResistanceMod.o \
 	${O}/TowerMetMod.o ${O}/clmDataMod.o ${O}/CanopyWaterMod.o ${O}/CanopyNitrogenProfileMod.o \
 	${O}/CanopyTurbulenceMod.o
 
@@ -238,6 +238,10 @@ ${O}/clmDataMod.o: ${drv}/clmDataMod.F90 $(mods)
 ${O}/SurfaceResistanceMod.o: ${bgp}/SurfaceResistanceMod.F90 $(mods)
 	$(cmplr) -c ${bgp}/SurfaceResistanceMod.F90
 	mv SurfaceResistanceMod.o ${O}
+
+${O}/MultibandSolarDataMod.o: ${can}/MultibandSolarDataMod.f90 $(mods)
+	$(cmplr) -c ${can}/MultibandSolarDataMod.f90
+	mv MultibandSolarDataMod.o ${O}
 
 ${O}/MultibandSolarMod.o: ${can}/MultibandSolarMod.f90 $(mods)
 	$(cmplr) -c ${can}/MultibandSolarMod.f90

@@ -14,6 +14,7 @@ module MultibandSolarMod
   ! use PatchType, only : patch
   ! use SurfaceAlbedoType, only : surfalb_type
   ! use CanopyFluxesMultilayerType, only : mlcanopy_type
+  ! use MultibandSolarDataMod
   !
   ! !PUBLIC TYPES:
   implicit none
@@ -204,33 +205,30 @@ contains
   end function trapz
 
 
-  ! main distribute rad subroutine
-  ! 1. Load reference spectra
-  ! 2. Smear spectra to n number of bands (or specific specified bands?)
-  ! 3. Check integral (solar) or integrated average (optical props) for consistency with original 
-  ! 4. Modify necessary variables in 
-  !   - mlcanopy_inst (swskyb, swskyd, ...)
-  !   - surfalb_inst (albgrd_col, albgri_col, ...)
-  !   - clm_varpar (numrad, ...)
-  !   Or instead create an input type that has all of the necessary things
+  !> Distribute single rl, tl, rs, idr, and idf reference values into sub-bands
+  !> defined by `wle`. Example/reference high-res spectra give the shapes. 
   subroutine distribute_rad(  &
     wlbi, rli, tli, rsi, idri, idfi,  &  ! TODO: clean up by making some types?
     wle,  &
     wl, dwl, rl, tl, rs, idr, idf  &
   )
+    use MultibandSolarDataMod  ! reference spectra
     real(r8), intent(in) :: wlbi(2)  ! wl bounds for the single band for the input values
     real(r8), intent(in) :: rli, tli, rsi, idri, idfi  ! input values (single band)
     real(r8), dimension(:), intent(in) :: wle  ! wavelength bounds for new grid
     real(r8), dimension(:), intent(out) :: wl, dwl
     real(r8), dimension(:), intent(out) :: rl, tl, rs, idr, idf  ! new values (spectral)
 
-    ! Reference spectra (later could be an input)
-    real(r8), dimension(nwl_leaf) :: wl0_leafsoil, rl0, tl0, rs0
-    real(r8), dimension(nwl_solar) :: wl0_solar, sidr0, sidf0
-
     ! Local variables
     integer :: n, nbins
     real(r8), dimension(:), allocatable :: sidr, sidf
+
+    ! Comment `use` above and uncomment below to load reference spectra from text files instead
+    ! real(r8), dimension(nwl_leaf) :: wl0_leafsoil, rl0, tl0, rs0
+    ! real(r8), dimension(nwl_solar) :: wl0_solar, sidr0, sidf0
+    ! call load_leaf_spectrum(wl0_leafsoil, rl0, tl0)
+    ! call load_soil_spectrum(wl0_leafsoil, rs0)
+    ! call load_solar_spectrum(wl0_solar, sidr0, sidf0)
 
     ! New wavelength grid
     n = ubound(wle, dim=1)  ! number of bin edges (nbins + 1)
@@ -240,11 +238,9 @@ contains
     nbins = n - 1
     allocate(sidr(n-1), sidf(n-1))
 
-    ! Load and smear optical properties
-    call load_leaf_spectrum(wl0_leafsoil, rl0, tl0)
+    ! Smear optical properties
     rl = smear(wl0_leafsoil, rl0, wle)
     tl = smear(wl0_leafsoil, tl0, wle)
-    call load_soil_spectrum(wl0_leafsoil, rs0)
     rs = smear(wl0_leafsoil, rs0, wle)
 
     ! Correct optical property spectra based on the input values
@@ -253,8 +249,7 @@ contains
     tl = tl * tli / (sum(tl * dwl) / (wle(n) - wle(1)))
     rs = rs * rsi / (sum(rs * dwl) / (wle(n) - wle(1)))
 
-    ! Load and smear irradiances
-    call load_solar_spectrum(wl0_solar, sidr0, sidf0)
+    ! Smear irradiances
     sidr = smear(wl0_solar, sidr0, wle)
     sidf = smear(wl0_solar, sidf0, wle)
     idr = sidr * dwl  ! W m-2 um-1 -> W m-2
@@ -277,12 +272,13 @@ contains
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
   function distribute(wlbi, yi, wle, which, weight) result(y)
+    use MultibandSolarDataMod  ! reference spectra
     real(r8), intent(in) :: wlbi(2), yi, wle(:)
     character(len=*), intent(in) :: which
     logical, intent(in), optional :: weight
     real(r8), allocatable :: y(:)
 
-    real(r8), allocatable :: wl0(:), y0(:), y02(:), dwl(:), w(:)
+    real(r8), allocatable :: wl0(:), y0(:), dwl(:), w(:)
     integer :: n
 
     n = ubound(wle, dim=1)
@@ -295,25 +291,28 @@ contains
       if ( weight ) w = l_wl_plank_integ(6000._r8, wle(1:n-1), wle(2:n))
     end if
 
-    ! Load reference spectrum
+    ! Load reference wl positions and validate `which`
     select case (which)
-      case ('rl', 'tl')
-        allocate(wl0(nwl_leaf), y0(nwl_leaf), y02(nwl_leaf))
-        call load_leaf_spectrum(wl0, y0, y02)  ! TODO: maybe split rl/tl apart?
-        if ( which == 'tl' ) y0 = y02
-
-      case ('rs')
-        allocate(wl0(nwl_soil), y0(nwl_soil))
-        call load_soil_spectrum(wl0, y0)
-
+      case ('rl', 'tl', 'rs')
+        wl0 = wl0_leafsoil  ! TODO: may not be faster than loading from disk since allocating/copying?
       case ('idr', 'idf')
-        allocate(wl0(nwl_solar), y0(nwl_solar), y02(nwl_solar))
-        call load_solar_spectrum(wl0, y0, y02)
-        if ( which == 'idf' ) y0 = y02
-
+        wl0 = wl0_solar
       case default
         stop "invalid `which`. Valid options are: 'rl', 'tl'"
+    end select
 
+    ! Load reference spectrum
+    select case (which)
+      case ('rl')
+        y0 = rl0
+      case ('tl')
+        y0 = tl0
+      case ('rs')
+        y0 = rs0
+      case ('idr')
+        y0 = sidr0
+      case ('idf')
+        y0 = sidf0
     end select
 
     ! Smear reference spectrum to the desired bins

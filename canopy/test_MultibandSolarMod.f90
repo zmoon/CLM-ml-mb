@@ -1,6 +1,6 @@
 !> Test out the functionality of the multi-band mod
 !> In Bash, use this one-liner in this directory to run:
-!> gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o && ./a.out
+!> gfortran -c -ffree-line-length-none MultibandSolarDataMod.f90 && gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o MultibandSolarDataMod.o && ./a.out
 program test
   use shr_kind_mod, only : r8 => shr_kind_r8
   use MultibandSolarMod
