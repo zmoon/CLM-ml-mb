@@ -1,33 +1,14 @@
+!> This module provides routines for re-binning spectra
+!> and creating a set of sub-band values from a single broadband value for
+!> * leaf reflectance/transmittance
+!> * soil reflectance (albedo)
+!> * direct/diffuse irradiance
 module MultibandSolarMod
-
-  !-----------------------------------------------------------------------
-  ! !DESCRIPTION:
-  ! Distribute the two bands visible/PAR and NIR into multiple, using reference 
-  ! leaf and solar spectra. After applying canopy radiative transfer, integrate 
-  ! to obtain the needed PAR and NIR values.
-  !
-  ! !USES:
   use shr_kind_mod, only : r8 => shr_kind_r8
-  ! use abortutils, only : endrun
-  ! use decompMod, only : bounds_type
-  ! use pftconMod, only : pftcon
-  ! use PatchType, only : patch
-  ! use SurfaceAlbedoType, only : surfalb_type
-  ! use CanopyFluxesMultilayerType, only : mlcanopy_type
-  ! use MultibandSolarDataMod
-  !
-  ! !PUBLIC TYPES:
   implicit none
-  !
-  ! !PUBLIC MEMBER FUNCTIONS:
-  ! public :: SolarRadiation           ! Main driver for radiative transfer
-  !
-  ! !PRIVATE MEMBER FUNCTIONS:
-  ! private :: NormanRadiation         ! Norman radiative transfer
-  !-----------------------------------------------------------------------
-
 
   ! Number of wavelengths in each of the spectrum shape definitions
+  ! Only needed when loading from file
   integer, parameter :: nwl_leaf = 2101, nwl_solar = 122, nwl_soil = 2101
 
   ! Relative path to the location of the data files (so it matters where the code is run from)
@@ -50,7 +31,7 @@ module MultibandSolarMod
 contains
 
 
-  !> Compute Planck radiance (T, wl)
+  !> Compute Planck radiance L(T, wl)
   pure elemental real(r8) function l_wl_planck(T_K, wl_um) result(l)
     real(r8), intent(in) :: T_K, wl_um
     real(r8) :: wl
@@ -61,7 +42,7 @@ contains
   end function l_wl_planck
 
 
-  !> Estimate the definite integral of Planck radiance over a region
+  !> Estimate the definite integral of Planck radiance L(T, wl) over a region
   !> Currently using trapz but might be better to define and use a simps routine
   pure elemental real(r8) function l_wl_plank_integ(T_K, wla_um, wlb_um) result(res)
     real(r8), intent(in) :: T_K, wla_um, wlb_um
@@ -126,8 +107,6 @@ contains
       end do
     close(10)
   end subroutine load_solar_spectrum
-
-  ! TODO: Planck as another option for solar shape?
 
 
   !> Load the sample soil spectrum
@@ -294,7 +273,7 @@ contains
     ! Load reference wl positions and validate `which`
     select case (which)
       case ('rl', 'tl', 'rs')
-        wl0 = wl0_leafsoil  ! TODO: may not be faster than loading from disk since allocating/copying?
+        wl0 = wl0_leafsoil
       case ('idr', 'idf')
         wl0 = wl0_solar
       case default
