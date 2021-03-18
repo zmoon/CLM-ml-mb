@@ -44,7 +44,7 @@ module MultibandSolarMod
   real(r8), parameter :: &
     h = 6.62607e-34_r8, &  ! Planck constant (J s)
     c = 2.99792e8_r8, &  ! speed of light (m s-1)
-    k = 1.38065e-23_r8  ! Boltzmann constant (J K-1)
+    k_B = 1.38065e-23_r8  ! Boltzmann constant (J K-1)
 
 
 contains
@@ -56,7 +56,7 @@ contains
     real(r8) :: wl
     wl = wl_um * 1.e-6_r8  ! -> m
     l = (2 * h * c**2) / ( &
-      wl**5 * (exp(h * c / (wl * k * T_K)) - 1) &
+      wl**5 * (exp(h * c / (wl * k_B * T_K)) - 1) &
     )
   end function l_wl_planck
 
