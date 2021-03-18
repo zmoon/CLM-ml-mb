@@ -99,6 +99,7 @@ def load_out_ds(which="flux", *, subdir=""):
         )
 
     else:  # time series of vertical profiles
+        data[data == -999] = np.nan  # missing value tag
         nz = np.unique(data[:,1]).size
         assert data.shape[0] == nt * nz
         z = data[:nz,1]
