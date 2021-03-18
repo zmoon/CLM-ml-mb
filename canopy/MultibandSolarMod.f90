@@ -4,7 +4,7 @@
 !> * soil reflectance (albedo)
 !> * direct/diffuse irradiance
 module MultibandSolarMod
-  use shr_kind_mod, only : r8 => shr_kind_r8
+  use MultibandSolarDataMod, only: rk
   implicit none
 
   ! Number of wavelengths in each of the spectrum shape definitions
@@ -17,25 +17,25 @@ module MultibandSolarMod
     refspecbasepath = "../canopy/"  ! when running CLM-ml
 
   ! Wavelength bounds for some common bands (um)
-  real(r8), dimension(2), parameter :: &
-    wlb_par = [0.4_r8, 0.7_r8], &
-    wlb_nir = [0.7_r8, 2.5_r8]  ! no use going further in wavelength since don't have leaf/soil data
+  real(rk), dimension(2), parameter :: &
+    wlb_par = [0.4_rk, 0.7_rk], &
+    wlb_nir = [0.7_rk, 2.5_rk]  ! no use going further in wavelength since don't have leaf/soil data
 
   ! Constants for Planck
-  real(r8), parameter :: &
-    h = 6.62607e-34_r8, &  ! Planck constant (J s)
-    c = 2.99792e8_r8, &  ! speed of light (m s-1)
-    k_B = 1.38065e-23_r8  ! Boltzmann constant (J K-1)
+  real(rk), parameter :: &
+    h = 6.62607e-34_rk, &  ! Planck constant (J s)
+    c = 2.99792e8_rk, &  ! speed of light (m s-1)
+    k_B = 1.38065e-23_rk  ! Boltzmann constant (J K-1)
 
 
 contains
 
 
   !> Compute Planck radiance L(T, wl)
-  pure elemental real(r8) function l_wl_planck(T_K, wl_um) result(l)
-    real(r8), intent(in) :: T_K, wl_um
-    real(r8) :: wl
-    wl = wl_um * 1.e-6_r8  ! -> m
+  pure elemental real(rk) function l_wl_planck(T_K, wl_um) result(l)
+    real(rk), intent(in) :: T_K, wl_um
+    real(rk) :: wl
+    wl = wl_um * 1.e-6_rk  ! -> m
     l = (2 * h * c**2) / ( &
       wl**5 * (exp(h * c / (wl * k_B * T_K)) - 1) &
     )
@@ -44,28 +44,28 @@ contains
 
   !> Estimate the definite integral of Planck radiance L(T, wl) over a region
   !> Currently using trapz but might be better to define and use a simps routine
-  pure elemental real(r8) function l_wl_plank_integ(T_K, wla_um, wlb_um) result(res)
-    real(r8), intent(in) :: T_K, wla_um, wlb_um
+  pure elemental real(rk) function l_wl_plank_integ(T_K, wla_um, wlb_um) result(res)
+    real(rk), intent(in) :: T_K, wla_um, wlb_um
     integer, parameter :: n = 200  ! discrete points in the trapz
-    real(r8) :: wl_um(n), l(n)
+    real(rk) :: wl_um(n), l(n)
     integer :: i
     do i = 1, n  ! linspace
       wl_um(i) = wla_um + (wlb_um - wla_um) * (i - 1) / (n - 1)
     end do
     l = l_wl_planck(T_K, wl_um)
-    res = trapz(wl_um * 1.e-6_r8, l)
+    res = trapz(wl_um * 1.e-6_rk, l)
   end function l_wl_plank_integ
 
 
   !> Generate equal-width wavelength sub-bands for a certain spectral region
   !> Returns band edges, so the result will have size *n+1, not n*
   pure function wle_equal_width(wlb, n) result(wle)
-    real(r8), intent(in) :: wlb(2)  ! wavelength bounds of the region
+    real(rk), intent(in) :: wlb(2)  ! wavelength bounds of the region
     integer, intent(in) :: n  ! desired number of bands
-    real(r8) :: wle(n+1)
+    real(rk) :: wle(n+1)
 
     integer :: i
-    real(r8) :: dwl
+    real(rk) :: dwl
     dwl = (wlb(2) - wlb(1)) / n
 
     wle(1) = wlb(1)
@@ -79,7 +79,7 @@ contains
   !> Load the sample leaf spectrum
   subroutine load_leaf_spectrum(wl, rl, tl)
     integer, parameter :: n = nwl_leaf  ! number of values/lines
-    real(r8), dimension(n), intent(out) :: wl, rl, tl  ! wavelength, leaf reflectance, leaf transmittance
+    real(rk), dimension(n), intent(out) :: wl, rl, tl  ! wavelength, leaf reflectance, leaf transmittance
     character(len=*), parameter :: fp = refspecbasepath // "PROSPECT_sample.txt"  ! file path
     integer :: i
 
@@ -96,7 +96,7 @@ contains
   !> Load the sample solar spectrum
   subroutine load_solar_spectrum(wl, si_dr, si_df)
     integer, parameter :: n = nwl_solar  ! number of values/lines
-    real(r8), dimension(n), intent(out) :: wl, si_dr, si_df  ! wavelength, downwelling *spectral* direct irradiance, " " diffuse
+    real(rk), dimension(n), intent(out) :: wl, si_dr, si_df  ! wavelength, downwelling *spectral* direct irradiance, " " diffuse
     character(len=*), parameter :: fp = refspecbasepath // "SPCTRAL2_xls_default-spectrum.csv"
     integer :: i
 
@@ -112,14 +112,14 @@ contains
   !> Load the sample soil spectrum
   subroutine load_soil_spectrum(wl, rs)
     integer, parameter :: n = nwl_soil  ! number of values/lines
-    real(r8), dimension(n), intent(out) :: wl, rs  ! wavelength, soil reflectivity
-    real(r8), dimension(n) :: rs_dry, rs_wet
+    real(rk), dimension(n), intent(out) :: wl, rs  ! wavelength, soil reflectivity
+    real(rk), dimension(n) :: rs_dry, rs_wet
     character(len=*), parameter :: fp = refspecbasepath // "PROSAIL_sample-soil.txt"  ! file path
-    real(r8), parameter :: f_wet = 0
+    real(rk), parameter :: f_wet = 0
     integer :: i
 
     !> Wavelength isn't in the file, but it is 400:1:2500 in nm just like the PROSPECT one
-    wl = [ (real(i, r8), i = 400, 2500, 1) ] / 1000
+    wl = [ (real(i, rk), i = 400, 2500, 1) ] / 1000
 
     open(unit=10, file=fp)
       ! no header on this file
@@ -135,10 +135,10 @@ contains
 
   !> Smear y(x) values over the single bin defined by [xgl, xgu]
   !> Using cumulative extrapolative trapezoidal integration, based on TUV's smear
-  pure real(r8) function smear1(x, y, xgl, xgu) result(yg) 
-    real(r8), dimension(:), intent(in) :: x, y
-    real(r8), intent(in) :: xgl, xgu
-    real(r8) :: area, a1, a2, slope, b1, b2
+  pure real(rk) function smear1(x, y, xgl, xgu) result(yg)
+    real(rk), dimension(:), intent(in) :: x, y
+    real(rk), intent(in) :: xgl, xgu
+    real(rk) :: area, a1, a2, slope, b1, b2
     integer :: k, n
     n = size(x)
 
@@ -158,9 +158,9 @@ contains
 
   !> Smear y(x) values to x-bins (bin edges!) using smear1
   pure function smear(x, y, bins) result(ynew)
-    real(r8), dimension(:), intent(in) :: x, y
-    real(r8), dimension(:), intent(in) :: bins
-    real(r8), dimension(:), allocatable :: ynew
+    real(rk), dimension(:), intent(in) :: x, y
+    real(rk), dimension(:), intent(in) :: bins
+    real(rk), dimension(:), allocatable :: ynew
     integer :: i, n
     n = size(bins)  ! number of bins!
 
@@ -172,8 +172,8 @@ contains
 
 
   !> Trapezoidal integral of y(x)
-  pure real(r8) function trapz(x, y) result(res)
-    real(r8), dimension(:), intent(in) :: x, y
+  pure real(rk) function trapz(x, y) result(res)
+    real(rk), dimension(:), intent(in) :: x, y
     integer :: i, n
     n = size(x)
 
@@ -192,19 +192,19 @@ contains
     wl, dwl, rl, tl, rs, idr, idf  &
   )
     use MultibandSolarDataMod  ! reference spectra
-    real(r8), intent(in) :: wlbi(2)  ! wl bounds for the single band for the input values
-    real(r8), intent(in) :: rli, tli, rsi, idri, idfi  ! input values (single band)
-    real(r8), dimension(:), intent(in) :: wle  ! wavelength bounds for new grid
-    real(r8), dimension(:), intent(out) :: wl, dwl
-    real(r8), dimension(:), intent(out) :: rl, tl, rs, idr, idf  ! new values (spectral)
+    real(rk), intent(in) :: wlbi(2)  ! wl bounds for the single band for the input values
+    real(rk), intent(in) :: rli, tli, rsi, idri, idfi  ! input values (single band)
+    real(rk), dimension(:), intent(in) :: wle  ! wavelength bounds for new grid
+    real(rk), dimension(:), intent(out) :: wl, dwl
+    real(rk), dimension(:), intent(out) :: rl, tl, rs, idr, idf  ! new values (spectral)
 
     ! Local variables
     integer :: n, nbins
-    real(r8), dimension(:), allocatable :: sidr, sidf
+    real(rk), dimension(:), allocatable :: sidr, sidf
 
     ! Comment `use` above and uncomment below to load reference spectra from text files instead
-    ! real(r8), dimension(nwl_leaf) :: wl0_leafsoil, rl0, tl0, rs0
-    ! real(r8), dimension(nwl_solar) :: wl0_solar, sidr0, sidf0
+    ! real(rk), dimension(nwl_leaf) :: wl0_leafsoil, rl0, tl0, rs0
+    ! real(rk), dimension(nwl_solar) :: wl0_solar, sidr0, sidf0
     ! call load_leaf_spectrum(wl0_leafsoil, rl0, tl0)
     ! call load_soil_spectrum(wl0_leafsoil, rs0)
     ! call load_solar_spectrum(wl0_solar, sidr0, sidf0)
@@ -252,12 +252,12 @@ contains
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
   function distribute(wlbi, yi, wle, which, weight) result(y)
     use MultibandSolarDataMod  ! reference spectra
-    real(r8), intent(in) :: wlbi(2), yi, wle(:)
+    real(rk), intent(in) :: wlbi(2), yi, wle(:)
     character(len=*), intent(in) :: which
     logical, intent(in), optional :: weight
-    real(r8), allocatable :: y(:)
+    real(rk), allocatable :: y(:)
 
-    real(r8), allocatable :: wl0(:), y0(:), dwl(:), w(:)
+    real(rk), allocatable :: wl0(:), y0(:), dwl(:), w(:)
     integer :: n
 
     n = ubound(wle, dim=1)
@@ -267,7 +267,7 @@ contains
 
     w = 1  ! default
     if ( present(weight) ) then
-      if ( weight ) w = l_wl_plank_integ(6000._r8, wle(1:n-1), wle(2:n))
+      if ( weight ) w = l_wl_plank_integ(6000._rk, wle(1:n-1), wle(2:n))
     end if
 
     ! Load reference wl positions and validate `which`

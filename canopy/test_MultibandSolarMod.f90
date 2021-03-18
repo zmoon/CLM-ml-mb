@@ -2,27 +2,27 @@
 !> In Bash, use this one-liner in this directory to run:
 !> gfortran -c -ffree-line-length-none MultibandSolarDataMod.f90 && gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o MultibandSolarDataMod.o && ./a.out
 program test
-  use shr_kind_mod, only : r8 => shr_kind_r8
+  use MultibandSolarDataMod, only: rk
   use MultibandSolarMod
   implicit none
 
-  real(r8), parameter :: pi = 4*atan(1._r8)
+  real(rk), parameter :: pi = 4*atan(1._rk)
 
   !> Initial data, loaded from the files
-  real(r8) :: &
+  real(rk) :: &
     wl0_leaf(nwl_leaf), rl0(nwl_leaf), tl0(nwl_leaf), &
     wl0_solar(nwl_solar), si_dr(nwl_solar), si_df(nwl_solar), &
     wl0_soil(nwl_soil), rs0(nwl_soil)
 
   !> Smeared
-  real(r8) :: & 
+  real(rk) :: &
     x1(11), y1(11), bins1(6), ynew1(5), dbins1(5), &
     wle1(4), dwl1(3), rl1(3)
 
   !> Distribute rad
-  real(r8) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4), wle2(2)
-  real(r8), dimension(3) :: wl, dwl, rl, tl, rs, idr, idf
-  real(r8), dimension(1) :: wl2, dwl2, rl2, tl2, rs2, idr2, idf2
+  real(rk) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4), wle2(2)
+  real(rk), dimension(3) :: wl, dwl, rl, tl, rs, idr, idf
+  real(rk), dimension(1) :: wl2, dwl2, rl2, tl2, rs2, idr2, idf2
 
   integer, parameter :: nwl_print = 3
 
@@ -33,20 +33,20 @@ program test
   !> Planck radiance
   print *, '!> Planck radiance L'
   print *, 'h, c, k_B', h, c, k_B
-  print *, 'L(6000 K, 1 um):', l_wl_planck(6000._r8, 1._r8) / 1.e9 / 1.e4
+  print *, 'L(6000 K, 1 um):', l_wl_planck(6000._rk, 1._rk) / 1.e9 / 1.e4
   print *, '  should be: ~ 1.191 W/(sr m2)/m'
-  print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_r8, [0.5_r8, 1._r8, 1.5_r8]) / 1.e9 / 1.e4
+  print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_rk, [0.5_rk, 1._rk, 1.5_rk]) / 1.e9 / 1.e4
 
   !> Planck radiance definite integrals
   print *
   print *, '!> Planck radiance definite integrals'
-  print *, 'L(6000 K) 0.5:1.5:', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)
-  print *, 'L(6000 K) 0.3:5:', l_wl_plank_integ(6000._r8, 0.3_r8, 5._r8)
-  print *, 'L(6000 K) 0.1:10:', l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
-  print *, '0.5:1.5 frac of total (0.1:10):', l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/l_wl_plank_integ(6000._r8, 0.1_r8, 10._r8)
-  print *, '0.5:1.5 frac of total (S-B):', pi*l_wl_plank_integ(6000._r8, 0.5_r8, 1.5_r8)/(5.6704e-8_r8 * 6000._r8**4)
+  print *, 'L(6000 K) 0.5:1.5:', l_wl_plank_integ(6000._rk, 0.5_rk, 1.5_rk)
+  print *, 'L(6000 K) 0.3:5:', l_wl_plank_integ(6000._rk, 0.3_rk, 5._rk)
+  print *, 'L(6000 K) 0.1:10:', l_wl_plank_integ(6000._rk, 0.1_rk, 10._rk)
+  print *, '0.5:1.5 frac of total (0.1:10):', l_wl_plank_integ(6000._rk, 0.5_rk, 1.5_rk)/l_wl_plank_integ(6000._rk, 0.1_rk, 10._rk)
+  print *, '0.5:1.5 frac of total (S-B):', pi*l_wl_plank_integ(6000._rk, 0.5_rk, 1.5_rk)/(5.6704e-8_rk * 6000._rk**4)
   print *, '  should be ~ 0.6168'
-  print *, 'multiple bounds (0.4:0.5, 0.5:0.6):', l_wl_plank_integ(6000._r8, [0.4_r8, 0.5_r8], [0.5_r8, 0.6_r8])
+  print *, 'multiple bounds (0.4:0.5, 0.5:0.6):', l_wl_plank_integ(6000._rk, [0.4_rk, 0.5_rk], [0.5_rk, 0.6_rk])
 
   !> Check that leaf was loaded correctly
   call load_leaf_spectrum(wl0_leaf, rl0, tl0)
@@ -85,7 +85,7 @@ program test
   end do
 
   !> Basic smearing test
-  x1 = [ (real(i, r8), i = 0, 10) ]
+  x1 = [ (real(i, rk), i = 0, 10) ]
   y1 = 25 - (x1 - 5)**2  ! inverted parabola, true integral is 500/3 ~ 166.67
   bins1 = [0., 2.5, 7., 8., 9., 10.]
   n = ubound(bins1, dim=1)
