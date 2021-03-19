@@ -185,7 +185,8 @@ contains
 
 
   !> Distribute single rl, tl, rs, idr, and idf reference values into sub-bands
-  !> defined by `wle`. Example/reference high-res spectra give the shapes. 
+  !> defined by `wle`. Example/reference high-res spectra give the shapes.
+  !> Note that this subroutine doesn't currently have the `weight` option that `distribute` has.
   subroutine distribute_rad(  &
     wlbi, rli, tli, rsi, idri, idfi,  &  ! TODO: clean up by making some types?
     wle,  &
@@ -241,12 +242,6 @@ contains
     idf = idf * idfi / sum(idf)
 
   end subroutine distribute_rad
-
-
-  ! TODO: find a way to keep the reference spectra in memory instead of re-loading
-  ! every time one of the distribute routines is called. Seems to be slowing down CLM-ml
-  ! * create module source file with them defined in the code
-  ! * move the loaders to a separate module and call once only
 
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
