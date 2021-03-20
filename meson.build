@@ -17,7 +17,7 @@ add_global_arguments(dialect, language: 'fortran')
 
 # Note:
 # * these can instead be in a `meson.build` of each subdir and loaded with `subdir()`
-# * these are just in alphabetical order--Meson figures out the correct build order
+# * these are in alphabetical order (`ls` order)--Meson figures out the correct build order
 src_shr = [
   'csm_share/shr_file_mod.F90',
   'csm_share/shr_kind_mod.F90',
@@ -93,14 +93,22 @@ src_drv = [
 ]
 src_all = src_shr + src_main + src_util + src_bgp + src_canopy + src_drv + src_mb
 
-# dependency('netcdf', required: true)
-
 # Create clm-ml executable
-link_args = [
-  '-I/usr/include', '-lnetcdff',
-  '-lblas', '-llapack', '-lm'
+deps = [
+  # dependency('netcdf', language: 'fortran', required: true),
+  fc.find_library('netcdff'),  # ^ above not working
+  fc.find_library('blas'),
+  fc.find_library('lapack'),
+  fc.find_library('m'),  # doesn't seem to actually be used
 ]
-executable('clm-ml', files(src_all), link_args: link_args)
+# link_args = [
+#   '-lnetcdff',  # enable `include 'netcdf.inc'`s
+# ]
+executable('clm-ml',
+  sources: files(src_all),
+  # link_args: link_args,
+  dependencies: deps,
+)
 
 # Create multiband test program and mark it as a test
 test_mb_exe = executable('test_mb', src_mb + ['canopy/test_MultibandSolarMod.f90'])
