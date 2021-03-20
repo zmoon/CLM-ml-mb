@@ -6,15 +6,36 @@ project('CLM-ml-zm', 'fortran',
   ]
 )
 
-# Add other dialect options
+# Compiler-specific dialect options
 fc = meson.get_compiler('fortran')
 if fc.get_id() == 'gcc'
-  dialect = ['-ffree-line-length-none', '-fno-range-check', '-I/usr/include']
+  dialect = ['-ffree-line-length-none', '-fno-range-check']
 else
   error('not supporting other compilers at this time...')
 endif
-add_global_arguments(dialect, language: 'fortran')
 
+# Detect if running on ACI
+hostname = run_command('hostname').stdout().strip()
+on_aci = hostname.contains('aci.ics.psu.edu')
+if on_aci
+  message('PSU ACI detected')
+endif
+
+# Find the location of `netcdf.inc` (needed to compile some of the objects)
+r = run_command('nf-config', '--includedir')
+if r.returncode() != 0
+  error(
+    'trying to get the netcdf-fortran include dir with `nf-config` failed. ' +
+    'Set `f_inc_netcdf` manually in `meson.build`?'
+  )
+endif
+f_inc_netcdf = '-I' + r.stdout().strip()
+
+# Set options for compiling the objects
+dialect += f_inc_netcdf
+add_project_arguments(dialect, language: 'fortran')
+
+# Define sources
 # Note:
 # * these can instead be in a `meson.build` of each subdir and loaded with `subdir()`
 # * these are in alphabetical order (`ls` order)--Meson figures out the correct build order
@@ -101,12 +122,16 @@ deps = [
   fc.find_library('lapack'),
   fc.find_library('m'),  # doesn't seem to actually be used
 ]
-# link_args = [
-#   '-lnetcdff',  # enable `include 'netcdf.inc'`s
-# ]
+if on_aci
+  # ACI's libnetcdff needs more supporting libs (not all covered by `nf-config --flibs`)
+  # Note: presumably could use `find_library` for this too
+  link_args = ['-lhdf5', '-lhdf5_hl', '-lsz', '-lnetcdf']
+else
+  link_args = []
+endif
 executable('clm-ml',
   sources: files(src_all),
-  # link_args: link_args,
+  link_args: link_args,
   dependencies: deps,
 )
 
