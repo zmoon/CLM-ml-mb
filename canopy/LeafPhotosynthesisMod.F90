@@ -136,7 +136,7 @@ contains
     end if
 
     !---------------------------------------------------------------------
-    ! High temperature deactivation: 
+    ! High temperature deactivation:
     ! Leuning (2002) Plant, Cell Environment 25:1205-1210
     ! The factor "c" scales the deactivation to a value of 1.0 at 25C
     !
@@ -177,7 +177,7 @@ contains
     vpd_min = 100._r8 ! Minimum vapor pressure deficit for Medlyn stomatal conductance (Pa)
 
     end associate
-  end subroutine PhotosynthesisParam 
+  end subroutine PhotosynthesisParam
 
   !-----------------------------------------------------------------------
   subroutine LeafPhotosynthesis (p, ic, il, mlcanopy_inst)
@@ -256,20 +256,20 @@ contains
        kc     = kc25          * ft(tleaf(p,ic,il), kcha)
        ko     = ko25          * ft(tleaf(p,ic,il), koha)
        cp     = cp25          * ft(tleaf(p,ic,il), cpha)
-       vcmax  = vcmax25(p,ic) * ft(tleaf(p,ic,il), vcmaxha) * fth(tleaf(p,ic,il), vcmaxhd, vcmaxse, vcmaxc) 
+       vcmax  = vcmax25(p,ic) * ft(tleaf(p,ic,il), vcmaxha) * fth(tleaf(p,ic,il), vcmaxhd, vcmaxse, vcmaxc)
        jmax   = jmax25(p,ic)  * ft(tleaf(p,ic,il), jmaxha)  * fth(tleaf(p,ic,il), jmaxhd, jmaxse, jmaxc)
        rdleaf = rd25(p,ic)    * ft(tleaf(p,ic,il), rdha)    * fth(tleaf(p,ic,il), rdhd, rdse, rdc)
 
        ! C4 temperature response
 
        if (nint(c3psn(patch%itype(p))) == 0) then
-          vcmax  = vcmax25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 ) 
+          vcmax  = vcmax25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 )
           vcmax  = vcmax / ( 1._r8 + exp( 0.2_r8*((tfrz+15._r8)-tleaf(p,ic,il)) ) )
-          vcmax  = vcmax / ( 1._r8 + exp( 0.3_r8*(tleaf(p,ic,il)-(tfrz+40._r8)) ) ) 
-          rdleaf = rd25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 ) 
+          vcmax  = vcmax / ( 1._r8 + exp( 0.3_r8*(tleaf(p,ic,il)-(tfrz+40._r8)) ) )
+          rdleaf = rd25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 )
           rdleaf = rdleaf / ( 1._r8 + exp( 1.3_r8*(tleaf(p,ic,il)-(tfrz+55._r8)) ) )
        end if
-       kp = kp25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 ) 
+       kp = kp25(p,ic) * 2.0**( (tleaf(p,ic,il)-(tfrz+25._r8)) / 10._r8 )
 
        ! Soil water
 
@@ -295,8 +295,8 @@ contains
 
        call SatVap (tleaf(p,ic,il), esat, desat)
 
-       ! Constrain eair >= 0.05*esat[tleaf] so that solution does not blow up. This 
-       ! ensures that hs does not go to zero. Also eair <= esat[tleaf] so that hs <= 1. 
+       ! Constrain eair >= 0.05*esat[tleaf] so that solution does not blow up. This
+       ! ensures that hs does not go to zero. Also eair <= esat[tleaf] so that hs <= 1.
 
 !      ceair = min( max(eair(p,ic), 0.05_r8*esat), esat )
        ceair = min( max(eair(p,ic), 0.20_r8*esat), esat )
@@ -439,7 +439,7 @@ contains
 
     associate ( &
                                           ! *** Input ***
-    c3psn  => pftcon%c3psn           , &  ! Photosynthetic pathway: 1. = c3 plant and 0. = c4 plant 
+    c3psn  => pftcon%c3psn           , &  ! Photosynthetic pathway: 1. = c3 plant and 0. = c4 plant
     dpai   => mlcanopy_inst%dpai     , &  ! Layer plant area index (m2/m2)
     o2ref  => mlcanopy_inst%o2ref    , &  ! Atmospheric O2 at reference height (mmol/mol)
     cair   => mlcanopy_inst%cair     , &  ! Atmospheric CO2 profile (umol/mol)
@@ -466,7 +466,7 @@ contains
 
           ! C3: Rubisco-limited photosynthesis
           ac(p,ic,il) = vcmax * max(ci_val-cp, 0._r8) / (ci_val + kc*(1._r8+o2ref(p)/ko))
- 
+
           ! C3: RuBP-limited photosynthesis
           aj(p,ic,il) = je * max(ci_val-cp, 0._r8) / (4._r8*ci_val + 8._r8*cp)
 
@@ -477,7 +477,7 @@ contains
 
           ! C4: Rubisco-limited photosynthesis
           ac(p,ic,il) = vcmax
- 
+
           ! C4: RuBP-limited photosynthesis
           aj(p,ic,il) = qe_c4 * apar(p,ic,il)
 
@@ -548,7 +548,7 @@ contains
 
        ! Ball-Berry stomatal conductance
        ! Quadratic gs calculation given An. Valid for An >= 0. With An <= 0, gs = g0
- 
+
        if (gstyp == 1) then
           if (an(p,ic,il) > 0._r8) then
              aquad = cs(p,ic,il)
@@ -615,7 +615,7 @@ contains
     !
     ! !DESCRIPTION:
     ! Calculate leaf photosynthesis for a specified stomatal conductance.
-    ! Then calculate Ci from the diffusion equation. 
+    ! Then calculate Ci from the diffusion equation.
     !
     ! !USES:
     use clm_varctl, only : use_colim
@@ -642,7 +642,7 @@ contains
 
     associate ( &
                                           ! *** Input ***
-    c3psn  => pftcon%c3psn           , &  ! Photosynthetic pathway: 1. = c3 plant and 0. = c4 plant 
+    c3psn  => pftcon%c3psn           , &  ! Photosynthetic pathway: 1. = c3 plant and 0. = c4 plant
     dpai   => mlcanopy_inst%dpai     , &  ! Layer plant area index (m2/m2)
     o2ref  => mlcanopy_inst%o2ref    , &  ! Atmospheric O2 at reference height (mmol/mol)
     cair   => mlcanopy_inst%cair     , &  ! Atmospheric CO2 profile (umol/mol)
@@ -660,7 +660,7 @@ contains
 
     !---------------------------------------------------------------------
     ! Calculate leaf photosynthesis for a specified stomatal conductance.
-    ! Then calculate Ci from the diffusion equation. 
+    ! Then calculate Ci from the diffusion equation.
     !
     ! This routine uses a quadratic equation to solve for net photosynthesis (An).
     ! A general equation for C3 photosynthesis is:
@@ -675,7 +675,7 @@ contains
     ! Rd = Leaf respiration (umol CO2/m2/s)
     ! Ci = Intercellular CO2 concentration (umol/mol)
     ! Cp = CO2 compensation point (umol/mol)
-    ! 
+    !
     ! Rubisco-limited photosynthesis (Ac)
     ! a  = Vcmax
     ! e  = 1
@@ -705,7 +705,7 @@ contains
     !            gb    gs
     !
     ! where:
-    ! 
+    !
     ! Ca  = Atmospheric CO2 concentration (umol/mol)
     ! gb  = Leaf boundary layer conductance (mol H2O/m2/s)
     ! gs  = Leaf stomatal conductance (mol H2O/m2/s)
@@ -742,7 +742,7 @@ contains
 
           call quadratic (aquad, bquad, cquad, r1, r2)
           ac(p,ic,il) = min(r1,r2) + rdleaf
- 
+
           ! C3: RuBP-limited photosynthesis
 
           a0 = je
@@ -764,7 +764,7 @@ contains
 
           ! C4: Rubisco-limited photosynthesis
           ac(p,ic,il) = vcmax
- 
+
           ! C4: RuBP-limited photosynthesis
           aj(p,ic,il) = qe_c4 * apar(p,ic,il)
 
@@ -812,7 +812,7 @@ contains
           end if
 
        end if
- 
+
        an(p,ic,il) = ag(p,ic,il) - rdleaf
 
        !------------------------------------------------------------------

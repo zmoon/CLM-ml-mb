@@ -248,7 +248,7 @@ contains
     real(r8), intent(out) :: fsdsbot(1,1,1)     ! Solar radiation (W/m2)
     real(r8), intent(out) :: fldsbot(1,1,1)     ! Longwave radiation (W/m2)
     real(r8), intent(out) :: pbot(1,1,1)        ! Air pressure at reference height (Pa)
-    real(r8), intent(out) :: prectbot(1,1,1)    ! Precipitation (mm/s)   
+    real(r8), intent(out) :: prectbot(1,1,1)    ! Precipitation (mm/s)
     !
     ! !LOCAL VARIABLES:
     integer :: ncid                             ! netcdf file ID
@@ -263,7 +263,7 @@ contains
     ! Dimensions in FORTRAN are in column major order: the first array index varies the most rapidly.
     ! In NetCDF file the dimensions appear in the opposite order: lat, lon (2-D); time, lat, lon (3-D);
     ! time, levgrnd, lat, lon (4-D)
- 
+
     start3 = (/ 1, 1, strt /)
     count3 = (/ 1, 1, 1 /)
 

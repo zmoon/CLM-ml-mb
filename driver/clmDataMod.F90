@@ -36,7 +36,7 @@ contains
     !
     ! !USES:
     use clm_varcon, only : denh2o
-    use clm_varpar, only : nlevgrnd 
+    use clm_varpar, only : nlevgrnd
     !
     ! !ARGUMENTS:
     implicit none
@@ -118,7 +118,7 @@ contains
     ! Read single-level variables from CLM netcdf history file
     !
     ! !USES:
-    use clm_varctl, only : pad_type 
+    use clm_varctl, only : pad_type
     !
     ! !ARGUMENTS:
     implicit none
@@ -142,7 +142,7 @@ contains
     ! Dimensions in FORTRAN are in column major order: the first array index varies the most rapidly.
     ! In NetCDF file the dimensions appear in the opposite order: lat, lon (2-D); time, lat, lon (3-D);
     ! time, levgrnd, lat, lon (4-D)
- 
+
     start2 = (/ 1, strt /)
     count2 = (/ 1, 1 /)
 

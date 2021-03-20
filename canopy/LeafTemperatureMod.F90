@@ -100,7 +100,7 @@ contains
        ! Linearized leaf temperature calculation that balances the energy budget
 
        num1 = 2._r8 * cpair(p) * gbh(p,ic,il)
-       num2 = lambda * gw 
+       num2 = lambda * gw
        num3 = rnleaf(p,ic,il) - lambda * gw * (qsat - dqsat * tleaf_old(p,ic,il)) &
             + cpleaf(p,ic) / dtime * tleaf_old(p,ic,il)
        den = cpleaf(p,ic) / dtime + num1 + num2 * dqsat
@@ -195,7 +195,7 @@ contains
        dry_weight = lma / fcarbon                                     ! kg C / m2 -> kg DM / m2
        fresh_weight = dry_weight / (1._r8 - fwater)                   ! kg DM / m2 -> kg FM / m2
        leaf_water = fwater * fresh_weight                             ! Leaf water (kg H2O / m2 leaf)
-       cpleaf(p,ic) = cpbio * dry_weight + cpliq * leaf_water         ! Heat capacity (J/K/m2 leaf) 
+       cpleaf(p,ic) = cpbio * dry_weight + cpliq * leaf_water         ! Heat capacity (J/K/m2 leaf)
     else ! non-leaf layer
        cpleaf(p,ic) = 0._r8
     end if

@@ -138,7 +138,7 @@ module CanopyFluxesMultilayerMod
     zref_old    => mlcanopy_inst%zref_old      , &  ! Reference height for previous timestep (m)
     tref        => mlcanopy_inst%tref          , &  ! Air temperature at reference height (K)
     qref        => mlcanopy_inst%qref          , &  ! Specific humidity at reference height (kg/kg)
-    rhref       => mlcanopy_inst%rhref         , &  ! Relative humidity at reference height (%) 
+    rhref       => mlcanopy_inst%rhref         , &  ! Relative humidity at reference height (%)
     uref        => mlcanopy_inst%uref          , &  ! Wind speed at reference height (m/s)
     pref        => mlcanopy_inst%pref          , &  ! Air pressure at reference height (Pa)
     swskyb      => mlcanopy_inst%swskyb        , &  ! Atmospheric direct beam solar radiation (W/m2)
@@ -417,7 +417,7 @@ module CanopyFluxesMultilayerMod
           p = filter_exposedvegp(f)
 
           ! Photosynthesis parameters
- 
+
           call PhotosynthesisParam (p, mlcanopy_inst)
 
           ! Leaf fluxes for each canopy layer

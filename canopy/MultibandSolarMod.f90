@@ -129,7 +129,7 @@ contains
     close(10)
 
     !> One soil reflectivity from combining dry and wet
-    rs = f_wet * rs_wet + (1 - f_wet) * rs_dry 
+    rs = f_wet * rs_wet + (1 - f_wet) * rs_dry
   end subroutine load_soil_spectrum
 
 

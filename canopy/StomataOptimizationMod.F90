@@ -107,13 +107,13 @@ contains
   function StomataEfficiency (p, ic, il, mlcanopy_inst, gs_val) result(val)
     !
     ! !DESCRIPTION:
-    ! Stomata water-use efficiency check and cavitation check to determine maximum gs. 
+    ! Stomata water-use efficiency check and cavitation check to determine maximum gs.
     ! For the stomatal conductance gs_val, calculate photosynthesis and leaf
     ! water potential for an increase in stomatal conductance equal to "delta".
     ! The returned value is positive if this increase produces a change in
     ! photosynthesis > iota*vpd*delta or if the leaf water potential is > minlwp.
     ! The returned value is negative if the increase produces a change in
-    ! photosynthesis < iota*vpd*delta or if the leaf water potential is < minlwp. 
+    ! photosynthesis < iota*vpd*delta or if the leaf water potential is < minlwp.
     !
     ! !USES:
     use pftconMod, only : pftcon
@@ -278,7 +278,7 @@ contains
 
     dtime = dtime_sub
 
-    ! Change in leaf water potential is: dy / dt = (a - y) / b. The integrated change 
+    ! Change in leaf water potential is: dy / dt = (a - y) / b. The integrated change
     ! over a full model timestep is: dy = (a - y0) * (1 - exp(-dt/b))
 
     if (dpai(p,ic) > 0._r8) then ! leaf layer

@@ -11,7 +11,7 @@ module clm_time_manager
   ! year, month, day of month, and time of day components. The time of day is
   ! expressed in UTC. A date is represented by 2 integer values. One integer contains
   ! the calendar date (year, month and day of month), and the other contains the
-  ! time of day (seconds past 0Z). 
+  ! time of day (seconds past 0Z).
   !
   ! The year, month, and day of month components are packed in an integer using the expression:
   ! yyyymmdd = year*10000 + month*100 + day, e.g., November 15, 2014 = 20141115
@@ -181,7 +181,7 @@ end function isleap
     mcyear = start_date_ymd / 10000
 
     ! Seconds and days since start
- 
+
     nsecs = itim * dtstep                         ! Elapsed seconds
     ndays = (nsecs + start_date_tod) / 86400      ! Elapsed days
     if ( isleap(mcyear, calkindflag) ) then
@@ -189,29 +189,29 @@ end function isleap
     else
        nyears = ndays / 365                       ! Elapsed years
     end if
- 
+
     ! Day of current year
     ! mod(A,P) computes the remainder of the division of A by P
- 
+
     if ( isleap(mcyear, calkindflag) ) then
        ndays = mod(ndays,366)
     else
        ndays = mod(ndays,365)
     end if
- 
+
     ! Current seconds of current date
- 
+
     tod = mod(nsecs+start_date_tod,86400)
- 
+
     ! Initialize current year, month, day
 
     mcyear = start_date_ymd / 10000 + nyears
     mcmnth = mod(start_date_ymd,10000) / 100
     mcday = mod(start_date_ymd,100) + ndays
- 
+
     ! Now loop through months, converting yyyy, mm, and dd to yyyymmdd
     ! e.g., 19791235 becomes 19800104, 190001370 becomes 19010105
- 
+
  10 continue
     if ( isleap(mcyear, calkindflag) ) then
        days_per_month = mdayleap(mcmnth)
@@ -229,7 +229,7 @@ end function isleap
     end if
     curr_date_ymd = mcyear*10000 + mcmnth*100 + mcday
 
-    ! Extract year, month, day of current date 
+    ! Extract year, month, day of current date
 
     yr = curr_date_ymd / 10000
     mon = mod(curr_date_ymd,10000) / 100
@@ -266,7 +266,7 @@ end function isleap
     mcyear = start_date_ymd / 10000
 
     ! Seconds and days since start
- 
+
     nsecs = (itim-1)* dtstep                      ! Elapsed seconds
     ndays = (nsecs + start_date_tod) / 86400      ! Elapsed days
     if ( isleap(mcyear, calkindflag) ) then
@@ -274,29 +274,29 @@ end function isleap
     else
        nyears = ndays / 365                       ! Elapsed years
     end if
- 
+
     ! Day of year
     ! mod(A,P) computes the remainder of the division of A by P
- 
+
     if ( isleap(mcyear, calkindflag) ) then
        ndays = mod(ndays,366)
     else
        ndays = mod(ndays,365)
     end if
- 
+
     ! Seconds of date
- 
+
     tod = mod(nsecs+start_date_tod,86400)
- 
+
     ! Initialize year, month, day
 
     mcyear = start_date_ymd / 10000 + nyears
     mcmnth = mod(start_date_ymd,10000) / 100
     mcday = mod(start_date_ymd,100) + ndays
- 
+
     ! Now loop through months, converting yyyy, mm, and dd to yyyymmdd
     ! e.g., 19791235 becomes 19800104, 190001370 becomes 19010105
- 
+
  10 continue
     if ( isleap(mcyear, calkindflag) ) then
        days_per_month = mdayleap(mcmnth)
@@ -314,7 +314,7 @@ end function isleap
     end if
     date_ymd = mcyear*10000 + mcmnth*100 + mcday
 
-    ! Extract year, month, day of date 
+    ! Extract year, month, day of date
 
     yr = date_ymd / 10000
     mon = mod(date_ymd,10000) / 100
@@ -378,7 +378,7 @@ end function isleap
     integer  :: tod                 ! Time of day (seconds past 0Z)
     real(r8) :: calday              ! Calendar day
     !---------------------------------------------------------------------
- 
+
     ! Current year, month, day of month, and time of day
 
     call get_curr_date (yr, mon, day, tod)
@@ -390,7 +390,7 @@ end function isleap
     else
        calday = float(mdaycum(mon-1)) + float(day) + float(tod) / 86400._r8
     end if
- 
+
     !----------------------------------------------------------------------------------------!
     !!!!!!!!!!!!!! WARNING HACK TO ENABLE Gregorian CALENDAR WITH SHR_ORB !!!!!!!!!!!!!!!!!!!!
     !!!! The following hack fakes day 366 by reusing day 365. This is just because the !!!!!!!
@@ -404,12 +404,12 @@ end function isleap
 
    !!!!!!!!!!!!!! END HACK TO ENABLE Gregorian CALENDAR WITH SHR_ORB
    !----------------------------------------------------------------------------------------!
- 
+
     if (calday < 1. .or. calday > 366.) then
        write (iulog,*) 'get_curr_calday error: out of bounds'
        call endrun()
     end if
- 
+
   end function get_curr_calday
 
   !-----------------------------------------------------------------------
@@ -425,7 +425,7 @@ end function isleap
     integer  :: tod                 ! Time of day (seconds past 0Z)
     real(r8) :: calday              ! Calendar day
     !---------------------------------------------------------------------
- 
+
     ! Year, month, day of month, and time of day
 
     call get_prev_date (yr, mon, day, tod)
@@ -437,7 +437,7 @@ end function isleap
     else
        calday = float(mdaycum(mon-1)) + float(day) + float(tod) / 86400._r8
     end if
- 
+
     !----------------------------------------------------------------------------------------!
     !!!!!!!!!!!!!! WARNING HACK TO ENABLE Gregorian CALENDAR WITH SHR_ORB !!!!!!!!!!!!!!!!!!!!
     !!!! The following hack fakes day 366 by reusing day 365. This is just because the !!!!!!!
@@ -451,12 +451,12 @@ end function isleap
 
    !!!!!!!!!!!!!! END HACK TO ENABLE Gregorian CALENDAR WITH SHR_ORB
    !----------------------------------------------------------------------------------------!
- 
+
     if (calday < 1. .or. calday > 366.) then
        write (iulog,*) 'get_curr_calday error: out of bounds'
        call endrun()
     end if
- 
+
   end function get_prev_calday
 
   !-----------------------------------------------------------------------

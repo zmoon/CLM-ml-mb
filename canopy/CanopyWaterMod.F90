@@ -151,7 +151,7 @@ contains
              fwet(p,ic) = max((h2ocan(p,ic)/h2ocanmx),0._r8)**0.67_r8
              fwet(p,ic) = min (fwet(p,ic), maximum_leaf_wetted_fraction)
 
-             ! Fraction of canopy that is green and dry 
+             ! Fraction of canopy that is green and dry
 
              fdry(p,ic) = (1._r8 - fwet(p,ic)) * (dlai(p,ic) / dpai(p,ic))
 

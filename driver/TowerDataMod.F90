@@ -57,7 +57,7 @@ module TowerDataMod
 
   ! Specific year and month to process are controlled by namelist
 
-  integer :: tower_num      ! Tower site index (maps to TowerDataMod arrays) 
+  integer :: tower_num      ! Tower site index (maps to TowerDataMod arrays)
   integer :: tower_yrbeg    ! First year to process
   integer :: tower_yrend    ! Last year to process
   integer :: tower_month    ! Month to process

@@ -59,7 +59,7 @@ program test
   do i = nwl_leaf - nwl_print + 1, nwl_leaf
     print *, i, wl0_leaf(i), rl0(i), tl0(i)
   end do
-  
+
   !> Check that solar was loaded correctly
   call load_solar_spectrum(wl0_solar, si_dr, si_df)
   print *

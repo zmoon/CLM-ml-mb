@@ -145,8 +145,8 @@ contains
 
 
 !Set up input matrix AB
-!An m-by-n band matrix with kl subdiagonals and ku superdiagonals 
-!may be stored compactly in a two-dimensional array with 
+!An m-by-n band matrix with kl subdiagonals and ku superdiagonals
+!may be stored compactly in a two-dimensional array with
 !kl+ku+1 rows and n columns
 !AB(KL+KU+1+i-j,j) = A(i,j)
 
@@ -183,11 +183,11 @@ contains
        call dgbsv( n, kl, ku, 1, ab, m, ipiv, result, n, info )
        u(ci,jtop(ci):jbot(ci))=result(:)
 
-       if(info /= 0) then 
+       if(info /= 0) then
           write(iulog,*)'index: ', ci
           write(iulog,*)'n,kl,ku,m ',n,kl,ku,m
           write(iulog,*)'dgbsv info: ',ci,info
-          
+
           write(iulog,*) ''
           write(iulog,*) 'ab matrix'
           do j=1,n

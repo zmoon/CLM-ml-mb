@@ -63,7 +63,7 @@ contains
     ! !LOCAL VARIABLES:
     real(r8), parameter :: dayspy = 365._r8   ! Days per year
     real(r8), parameter :: ve     = 80.5_r8   ! calday of vernal equinox (assumes Jan 1 = calday 1)
- 
+
     real(r8) ::   lambm  ! lambda m, mean longitude of perihelion (radians)
     real(r8) ::   lmm    ! Intermediate argument involving lambm
     real(r8) ::   lamb   ! Lambda (Earth's longitude of perihelion)
@@ -71,7 +71,7 @@ contains
     real(r8) ::   sinl   ! Sine of lmm
     !---------------------------------------------------------------------
 
-    ! To get the Earth's true longitude (position in orbit; lambda in Berger 
+    ! To get the Earth's true longitude (position in orbit; lambda in Berger
     ! 1978) which is necessary to find the eccentricity factor and declination,
     ! must first calculate the mean longitude (lambda m in Berger 1978) at
     ! the present day.  This is done by adding to lambm0 (the mean longitude
@@ -79,39 +79,39 @@ contains
     ! an increment (delta lambda m in Berger 1978) that is the number of
     ! days past or before (a negative increment) the vernal equinox divided by
     ! the days in a model year times the 2*pi radians in a complete orbit.
- 
+
     lambm = lambm0 + (calday - ve)*2._r8*pi/dayspy
     lmm   = lambm  - mvelpp
- 
+
     ! The earths true longitude, in radians, is then found from
     ! the formula in Berger 1978:
- 
+
     sinl  = sin(lmm)
     lamb  = lambm  + eccen*(2._r8*sinl + eccen*(1.25_r8*sin(2._r8*lmm)  &
           + eccen*((13.0_r8/12.0_r8)*sin(3._r8*lmm) - 0.25_r8*sinl)))
- 
+
     ! Using the obliquity, eccentricity, moving vernal equinox longitude of
     ! perihelion (plus), and Earth's true longitude, the declination (delta)
     ! and the normalized earth/sun distance (rho in Berger 1978; actually inverse
-    ! rho will be used), and thus the eccentricity factor (eccf), can be 
+    ! rho will be used), and thus the eccentricity factor (eccf), can be
     ! calculated from formulas given in Berger 1978.
- 
+
     invrho = (1._r8 + eccen*cos(lamb - mvelpp)) / (1._r8 - eccen*eccen)
- 
+
     ! Set solar declination and eccentricity factor
- 
+
     delta  = asin(sin(obliqr)*sin(lamb))
     eccf   = invrho*invrho
- 
+
   end subroutine shr_orb_decl
 
   !-----------------------------------------------------------------------
   subroutine shr_orb_params (iyear_AD, eccen, obliq, mvelp, obliqr, lambm0, mvelpp)
     !
     ! !DESCRIPTION:
-    ! Calculate Earth's orbital parameters using Dave Threshers formula which 
-    ! came from Berger, Andre.  1978  "A Simple Algorithm to Compute Long-Term 
-    ! Variations of Daily Insolation".  Contribution 18, Institute of Astronomy 
+    ! Calculate Earth's orbital parameters using Dave Threshers formula which
+    ! came from Berger, Andre.  1978  "A Simple Algorithm to Compute Long-Term
+    ! Variations of Daily Insolation".  Contribution 18, Institute of Astronomy
     ! and Geophysics, Universite Catholique de Louvain, Louvain-la-Neuve, Belgium
     !
     ! !ARGUMENTS:
@@ -136,7 +136,7 @@ contains
 
     ! Cosine series data for computation of obliquity: amplitude (arc seconds),
     ! rate (arc seconds/year), phase (degrees).
- 
+
     real   (SHR_KIND_R8), parameter :: obamp(poblen) =  & ! amplitudes for obliquity cos series
     &      (/   -2462.2214466_SHR_KIND_R8, -857.3232075_SHR_KIND_R8, -629.3231835_SHR_KIND_R8,   &
     &            -414.2804924_SHR_KIND_R8, -311.7632587_SHR_KIND_R8,  308.9408604_SHR_KIND_R8,   &
@@ -154,7 +154,7 @@ contains
     &              -1.5428851_SHR_KIND_R8,    1.4738838_SHR_KIND_R8,   -1.4593669_SHR_KIND_R8,   &
     &               1.4192259_SHR_KIND_R8,   -1.1818980_SHR_KIND_R8,    1.1756474_SHR_KIND_R8,   &
     &              -1.1316126_SHR_KIND_R8,    1.0896928_SHR_KIND_R8/)
- 
+
     real   (SHR_KIND_R8), parameter :: obrate(poblen) = & ! rates for obliquity cosine series
     &        (/  31.609974_SHR_KIND_R8, 32.620504_SHR_KIND_R8, 24.172203_SHR_KIND_R8,   &
     &            31.983787_SHR_KIND_R8, 44.828336_SHR_KIND_R8, 30.973257_SHR_KIND_R8,   &
@@ -172,7 +172,7 @@ contains
     &            48.344406_SHR_KIND_R8, 55.145460_SHR_KIND_R8, 69.000539_SHR_KIND_R8,   &
     &            11.071350_SHR_KIND_R8, 74.291298_SHR_KIND_R8, 11.047742_SHR_KIND_R8,   &
     &             0.636717_SHR_KIND_R8, 12.844549_SHR_KIND_R8/)
- 
+
     real   (SHR_KIND_R8), parameter :: obphas(poblen) = & ! phases for obliquity cosine series
     &      (/    251.9025_SHR_KIND_R8, 280.8325_SHR_KIND_R8, 128.3057_SHR_KIND_R8,   &
     &            292.7252_SHR_KIND_R8,  15.3747_SHR_KIND_R8, 263.7951_SHR_KIND_R8,   &
@@ -190,11 +190,11 @@ contains
     &            256.6114_SHR_KIND_R8,  32.1008_SHR_KIND_R8, 143.6804_SHR_KIND_R8,   &
     &             16.8784_SHR_KIND_R8, 160.6835_SHR_KIND_R8,  27.5932_SHR_KIND_R8,   &
     &            348.1074_SHR_KIND_R8,  82.6496_SHR_KIND_R8/)
- 
-    ! Cosine/sine series data for computation of eccentricity and fixed vernal 
-    ! equinox longitude of perihelion (fvelp): amplitude, 
+
+    ! Cosine/sine series data for computation of eccentricity and fixed vernal
+    ! equinox longitude of perihelion (fvelp): amplitude,
     ! rate (arc seconds/year), phase (degrees).
- 
+
     real   (SHR_KIND_R8), parameter :: ecamp (pecclen) = & ! ampl for eccen/fvelp cos/sin series
     &      (/   0.01860798_SHR_KIND_R8,  0.01627522_SHR_KIND_R8, -0.01300660_SHR_KIND_R8,   &
     &           0.00988829_SHR_KIND_R8, -0.00336700_SHR_KIND_R8,  0.00333077_SHR_KIND_R8,   &
@@ -203,7 +203,7 @@ contains
     &           0.00037800_SHR_KIND_R8, -0.00033700_SHR_KIND_R8,  0.00027600_SHR_KIND_R8,   &
     &           0.00018200_SHR_KIND_R8, -0.00017400_SHR_KIND_R8, -0.00012400_SHR_KIND_R8,   &
     &           0.00001250_SHR_KIND_R8/)
- 
+
     real   (SHR_KIND_R8), parameter :: ecrate(pecclen) = & ! rates for eccen/fvelp cos/sin series
     &      (/    4.2072050_SHR_KIND_R8,  7.3460910_SHR_KIND_R8, 17.8572630_SHR_KIND_R8,  &
     &           17.2205460_SHR_KIND_R8, 16.8467330_SHR_KIND_R8,  5.1990790_SHR_KIND_R8,  &
@@ -212,7 +212,7 @@ contains
     &           18.4939800_SHR_KIND_R8,  6.1909530_SHR_KIND_R8, 18.8677930_SHR_KIND_R8,  &
     &           17.4255670_SHR_KIND_R8,  6.1860010_SHR_KIND_R8, 18.4174410_SHR_KIND_R8,  &
     &            0.6678630_SHR_KIND_R8/)
- 
+
     real   (SHR_KIND_R8), parameter :: ecphas(pecclen) = & ! phases for eccen/fvelp cos/sin series
     &      (/    28.620089_SHR_KIND_R8, 193.788772_SHR_KIND_R8, 308.307024_SHR_KIND_R8,  &
     &           320.199637_SHR_KIND_R8, 279.376984_SHR_KIND_R8,  87.195000_SHR_KIND_R8,  &
@@ -221,11 +221,11 @@ contains
     &           296.414411_SHR_KIND_R8, 145.769910_SHR_KIND_R8, 337.237063_SHR_KIND_R8,  &
     &           152.092288_SHR_KIND_R8, 126.839891_SHR_KIND_R8, 210.667199_SHR_KIND_R8,  &
     &            72.108838_SHR_KIND_R8/)
- 
-    ! Sine series data for computation of moving vernal equinox longitude of 
-    ! perihelion: amplitude (arc seconds), rate (arc sec/year), phase (degrees).      
- 
-    real   (SHR_KIND_R8), parameter :: mvamp (pmvelen) = & ! amplitudes for mvelp sine series 
+
+    ! Sine series data for computation of moving vernal equinox longitude of
+    ! perihelion: amplitude (arc seconds), rate (arc sec/year), phase (degrees).
+
+    real   (SHR_KIND_R8), parameter :: mvamp (pmvelen) = & ! amplitudes for mvelp sine series
     &      (/   7391.0225890_SHR_KIND_R8, 2555.1526947_SHR_KIND_R8, 2022.7629188_SHR_KIND_R8,  &
     &          -1973.6517951_SHR_KIND_R8, 1240.2321818_SHR_KIND_R8,  953.8679112_SHR_KIND_R8,  &
     &           -931.7537108_SHR_KIND_R8,  872.3795383_SHR_KIND_R8,  606.3544732_SHR_KIND_R8,  &
@@ -252,8 +252,8 @@ contains
     &             11.6018181_SHR_KIND_R8,  -11.2617293_SHR_KIND_R8,  -10.4664199_SHR_KIND_R8,  &
     &             10.4333970_SHR_KIND_R8,  -10.2377466_SHR_KIND_R8,   10.1934446_SHR_KIND_R8,  &
     &            -10.1280191_SHR_KIND_R8,   10.0289441_SHR_KIND_R8,  -10.0034259_SHR_KIND_R8/)
- 
-    real   (SHR_KIND_R8), parameter :: mvrate(pmvelen) = & ! rates for mvelp sine series 
+
+    real   (SHR_KIND_R8), parameter :: mvrate(pmvelen) = & ! rates for mvelp sine series
     &      (/    31.609974_SHR_KIND_R8, 32.620504_SHR_KIND_R8, 24.172203_SHR_KIND_R8,   &
     &             0.636717_SHR_KIND_R8, 31.983787_SHR_KIND_R8,  3.138886_SHR_KIND_R8,   &
     &            30.973257_SHR_KIND_R8, 44.828336_SHR_KIND_R8,  0.991874_SHR_KIND_R8,   &
@@ -308,7 +308,7 @@ contains
     &            213.5577_SHR_KIND_R8, 154.1631_SHR_KIND_R8, 232.7153_SHR_KIND_R8,   &
     &            138.3034_SHR_KIND_R8, 204.6609_SHR_KIND_R8, 106.5938_SHR_KIND_R8,   &
     &            250.4676_SHR_KIND_R8, 332.3345_SHR_KIND_R8,  27.3039_SHR_KIND_R8/)
- 
+
     integer :: i        ! Index for series summations
     real(r8) :: obsum   ! Obliquity series summation
     real(r8) :: cossum  ! Cos series summation for eccentricity/fvelp
@@ -322,7 +322,7 @@ contains
     !---------------------------------------------------------------------
 
     yb4_1950AD = 1950.0_SHR_KIND_R8 - real(iyear_AD,SHR_KIND_R8)
- 
+
     ! The following calculates the earths obliquity, orbital eccentricity
     ! (and various powers of it) and vernal equinox mean longitude of
     ! perihelion for years in the past (future = negative of years past),
@@ -344,10 +344,10 @@ contains
     ! 5-10 million year solution.
     !
     ! Years to time of interest must be negative of years before present
-    ! (1950) in formulas that follow. 
- 
+    ! (1950) in formulas that follow.
+
     years = - yb4_1950AD
- 
+
     ! In the summations below, cosine or sine arguments, which end up in
     ! degrees, must be converted to radians via multiplication by degrad.
     !
@@ -356,38 +356,38 @@ contains
     ! degrees via multiplication by psecdeg (arc seconds to degrees conversion
     ! factor).  For obliq, first term is Berger 1978 epsilon star; second
     ! term is series summation in degrees.
-  
+
     obsum = 0.0_SHR_KIND_R8
     do i = 1, poblen
        obsum = obsum + obamp(i)*psecdeg*cos((obrate(i)*psecdeg*years + &
        &       obphas(i))*degrad)
     end do
     obliq = 23.320556_SHR_KIND_R8 + obsum
- 
-    ! Summation of cosine and sine series for computation of eccentricity 
-    ! (eccen; e in Berger 1978) and fixed vernal equinox longitude of 
-    ! perihelion (fvelp; pi in Berger 1978), which is used for computation 
-    ! of moving vernal equinox longitude of perihelion.  Convert the rates, 
+
+    ! Summation of cosine and sine series for computation of eccentricity
+    ! (eccen; e in Berger 1978) and fixed vernal equinox longitude of
+    ! perihelion (fvelp; pi in Berger 1978), which is used for computation
+    ! of moving vernal equinox longitude of perihelion.  Convert the rates,
     ! which are in arc seconds, into degrees via multiplication by psecdeg.
- 
+
     cossum = 0.0_SHR_KIND_R8
     do i = 1, pecclen
       cossum = cossum+ecamp(i)*cos((ecrate(i)*psecdeg*years+ecphas(i))*degrad)
     end do
- 
+
     sinsum = 0.0_SHR_KIND_R8
     do i = 1, pecclen
       sinsum = sinsum+ecamp(i)*sin((ecrate(i)*psecdeg*years+ecphas(i))*degrad)
     end do
- 
+
     ! Use summations to calculate eccentricity
- 
+
     eccen2 = cossum*cossum + sinsum*sinsum
     eccen  = sqrt(eccen2)
     eccen3 = eccen2*eccen
- 
+
     ! A series of cases for fvelp, which is in radians.
-         
+
     if (abs(cossum) .le. 1.0E-8_SHR_KIND_R8) then
       if (sinsum .eq. 0.0_SHR_KIND_R8) then
         fvelp = 0.0_SHR_KIND_R8
@@ -405,25 +405,25 @@ contains
         fvelp = atan(sinsum/cossum)
       endif
     endif
- 
+
     ! Summation of sin series for computation of moving vernal equinox long
     ! of perihelion (mvelp; omega bar in Berger 1978) in degrees.  For mvelp,
-    ! first term is fvelp in degrees; second term is Berger 1978 psi bar 
-    ! times years and in degrees; third term is Berger 1978 zeta; fourth 
+    ! first term is fvelp in degrees; second term is Berger 1978 psi bar
+    ! times years and in degrees; third term is Berger 1978 zeta; fourth
     ! term is series summation in degrees.  Convert the amplitudes and rates,
-    ! which are in arc seconds, into degrees via multiplication by psecdeg.  
+    ! which are in arc seconds, into degrees via multiplication by psecdeg.
     ! Series summation plus second and third terms constitute Berger 1978
     ! psi, which is the general precession.
- 
+
     mvsum = 0.0_SHR_KIND_R8
     do i = 1, pmvelen
       mvsum = mvsum + mvamp(i)*psecdeg*sin((mvrate(i)*psecdeg*years + &
       &       mvphas(i))*degrad)
     end do
     mvelp = fvelp/degrad + 50.439273_SHR_KIND_R8*psecdeg*years + 3.392506_SHR_KIND_R8 + mvsum
- 
+
     ! Cases to make sure mvelp is between 0 and 360.
- 
+
     do while (mvelp .lt. 0.0_SHR_KIND_R8)
       mvelp = mvelp + 360.0_SHR_KIND_R8
     end do
@@ -432,9 +432,9 @@ contains
     end do
 
     ! Orbit needs the obliquity in radians
- 
+
     obliqr = obliq*degrad
- 
+
     ! 180 degrees must be added to mvelp since observations are made from the
     ! earth and the sun is considered (wrongly for the algorithm) to go around
     ! the earth. For a more graphic explanation see Appendix B in:
@@ -444,22 +444,22 @@ contains
     !
     ! Additionally, orbit will need this value in radians. So mvelp becomes
     ! mvelpp (mvelp plus pi)
- 
+
     mvelpp = (mvelp + 180._SHR_KIND_R8)*degrad
- 
+
     ! Set up an argument used several times in lambm0 calculation ahead.
- 
+
     beta = sqrt(1._SHR_KIND_R8 - eccen2)
- 
+
     ! The mean longitude at the vernal equinox (lambda m nought in Berger
-    ! 1978; in radians) is calculated from the following formula given in 
+    ! 1978; in radians) is calculated from the following formula given in
     ! Berger 1978.  At the vernal equinox the true longitude (lambda in Berger
     ! 1978) is 0.
 
     lambm0 = 2._SHR_KIND_R8*((.5_SHR_KIND_R8*eccen + .125_SHR_KIND_R8*eccen3)*(1._SHR_KIND_R8 + beta)*sin(mvelpp)  &
     &      - .250_SHR_KIND_R8*eccen2*(.5_SHR_KIND_R8    + beta)*sin(2._SHR_KIND_R8*mvelpp)            &
     &      + .125_SHR_KIND_R8*eccen3*(1._SHR_KIND_R8/3._SHR_KIND_R8 + beta)*sin(3._SHR_KIND_R8*mvelpp))
- 
+
   end subroutine shr_orb_params
 
 end module shr_orb_mod

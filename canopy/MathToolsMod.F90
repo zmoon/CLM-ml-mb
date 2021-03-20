@@ -340,14 +340,14 @@ contains
     real(r8) :: beta               ! Beta function: B(p,q)
 
     beta = exp(log_gamma_function(p) + log_gamma_function(q) - log_gamma_function(p+q))
-  
+
   end function beta_function
 
   !-----------------------------------------------------------------------
   function log_gamma_function (x) result(gammaln)
     !
     ! !DESCRIPTION:
-    ! Return the value of the log natural of the gamma function evaluated at x: ln(G(x)) 
+    ! Return the value of the log natural of the gamma function evaluated at x: ln(G(x))
     !
     ! !USES:
     !

@@ -168,7 +168,7 @@ contains
 
       end do
     end do
-    
+
     ! Compute sub-banded spectral inputs -- leaf optical properties, ground albedos, downwelling irradiances
     do ib = 1, numrad
       do f = 1, num_exposedvegp
@@ -371,7 +371,7 @@ contains
           albvegh = (1._r8 - sqrt(1._r8 - omega(p,ib))) / (1._r8 + sqrt(1._r8 - omega(p,ib)))
 
           ! Direct beam vegetation albedo, non-horizontal leaves
-      
+
           albvegb = 2._r8 * kb(p) / (kb(p) + kd(p)) * albvegh
 
           ! Diffuse vegetation albedo, non-horizontal leaves
@@ -385,9 +385,9 @@ contains
              albvegd = albvegd + albvegbj * sin(angle) * cos(angle)
           end do
           albvegd = albvegd * 2._r8 * (10._r8 * pi / 180._r8)
-   
+
           ! Effective canopy albedo, including soil
-      
+
           albcanb(p,ib) = albvegb + (albsoib(c,ib) - albvegb) &
                         * exp(-2._r8 * kbm(p,ib) * (lai(p)+sai(p)) * clump_fac(patch%itype(p)))
           albcand(p,ib) = albvegd + (albsoid(c,ib) - albvegd) &
@@ -610,23 +610,23 @@ contains
 
           ! Soil: upward flux
 
-          m = m + 1 
-          atri(m) = 0._r8 
-          btri(m) = 1._r8 
-          ctri(m) = -albsoid(c,ib) 
-          dtri(m) = swskyb(p,ib) * tbj(p,0) * albsoib(c,ib) 
+          m = m + 1
+          atri(m) = 0._r8
+          btri(m) = 1._r8
+          ctri(m) = -albsoid(c,ib)
+          dtri(m) = swskyb(p,ib) * tbj(p,0) * albsoib(c,ib)
 
           ! Soil: downward flux
 
-          refld = (1._r8 - td(p,nbot(p))) * rho(p,ib) 
-          trand = (1._r8 - td(p,nbot(p))) * tau(p,ib) + td(p,nbot(p)) 
-          aic = refld - trand * trand / refld 
-          bic = trand / refld 
+          refld = (1._r8 - td(p,nbot(p))) * rho(p,ib)
+          trand = (1._r8 - td(p,nbot(p))) * tau(p,ib) + td(p,nbot(p))
+          aic = refld - trand * trand / refld
+          bic = trand / refld
 
-          m = m + 1 
-          atri(m) = -aic 
-          btri(m) = 1._r8 
-          ctri(m) = -bic 
+          m = m + 1
+          atri(m) = -aic
+          btri(m) = 1._r8
+          ctri(m) = -bic
           dtri(m) = swskyb(p,ib) * tbj(p,nbot(p)) * (1._r8 - tb(p,nbot(p))) * (tau(p,ib) - rho(p,ib) * bic)
 
           ! Leaf layers, excluding top layer
@@ -755,7 +755,7 @@ contains
              ! Absorbed radiation for shaded and sunlit portions of layer
 
              swsha = swabsd * fracsha(p,ic)
-             swsun = swabsd * fracsun(p,ic) + swabsb 
+             swsun = swabsd * fracsun(p,ic) + swabsb
 
              ! Per unit sunlit and shaded leaf area
 
@@ -768,7 +768,7 @@ contains
              swvegsun(p,ib) = swvegsun(p,ib) + swsun
              swvegsha(p,ib) = swvegsha(p,ib) + swsha
 
-          end do  
+          end do
 
           ! Albedo
 
@@ -790,7 +790,7 @@ contains
 
           ! Sunlit and shaded absorption
 
-          error = (swvegsun(p,ib) + swvegsha(p,ib)) - swveg(p,ib) 
+          error = (swvegsun(p,ib) + swvegsha(p,ib)) - swveg(p,ib)
           if (abs(error) > 1.e-03) then
              call endrun (msg='ERROR: NormanRadiation: sunlit/shade solar conservation error')
           end if
@@ -889,36 +889,36 @@ contains
           ! Calculate fluxes for leaf layers
 
           do ic = nbot(p), ntop(p)
-         
-             ! ild - absorbed diffuse flux per unit leaf area at cumulative LAI, 
+
+             ! ild - absorbed diffuse flux per unit leaf area at cumulative LAI,
              ! average for all leaves (J / m2 leaf / s)
 
              ild = (1._r8 - albcand(p,ib)) * swskyd(p,ib) * kdm(p,ib) * clump_fac(patch%itype(p)) &
                  * exp(-kdm(p,ib) * sumpai(p,ic) * clump_fac(patch%itype(p)))
-            
-             ! ilb - absorbed direct beam flux (total with scattering) per unit leaf area 
+
+             ! ilb - absorbed direct beam flux (total with scattering) per unit leaf area
              ! at cumulative LAI, average for all leaves (J / m2 leaf / s)
 
              ilb = (1._r8 - albcanb(p,ib)) * swskyb(p,ib) * kbm(p,ib) * clump_fac(patch%itype(p)) &
                  * exp(-kbm(p,ib) * sumpai(p,ic) * clump_fac(patch%itype(p)))
-            
-             ! ilbb - absorbed direct beam flux (unscattered direct component) per unit leaf area 
+
+             ! ilbb - absorbed direct beam flux (unscattered direct component) per unit leaf area
              ! at cumulative LAI, average for all leaves (J / m2 leaf / s)
 
              ilbb = (1._r8 - omega(p,ib)) * swskyb(p,ib) * kb(p) * clump_fac(patch%itype(p)) &
                   * exp(-kb(p) * sumpai(p,ic) * clump_fac(patch%itype(p)))
-            
-             ! ilbs - absorbed direct beam flux (scattered direct component) per unit leaf area 
+
+             ! ilbs - absorbed direct beam flux (scattered direct component) per unit leaf area
              ! at cumulative LAI, average for all leaves (J / m2 leaf / s)
 
              ilbs = ilb - ilbb
-            
-             ! ilsha - total absorbed flux (shaded leaves) per unit shaded leaf area 
+
+             ! ilsha - total absorbed flux (shaded leaves) per unit shaded leaf area
              ! at cumulative LAI (J / m2 leaf / s)
 
              ilsha = ild + ilbs
-            
-             ! ilsun - total absorbed flux (sunlit leaves) per unit sunlit leaf area 
+
+             ! ilsun - total absorbed flux (sunlit leaves) per unit sunlit leaf area
              ! at cumulative LAI (J / m2 leaf / s)
 
              ilsun = ilsha + kb(p) * (1._r8 - omega(p,ib)) * swskyb(p,ib)
@@ -1124,7 +1124,7 @@ contains
           iabsb_sha = iabsb - iabsb_sun
 
           ! Terms for diffuse radiation
- 
+
           num1 = swskyd(p,ib) * (u + v * albsoid(cp,ib)) * s1
           den1 = v * (v + u * albsoid(cp,ib)) / s1
           den2 = u * (u + v * albsoid(cp,ib)) * s1

@@ -5,7 +5,7 @@
 #
 # To remove obj files and mod files: type 'make clean'
 # ###############################################
- 
+
 # LIB_NETCDF = /usr/local/netcdf/lib
 # MOD_NETCDF = /usr/local/netcdf/lib
 # LIB_NETCDF = /usr/include
@@ -14,14 +14,14 @@ MOD_NETCDF := $$(nf-config --includedir)
 LIB_NETCDF := ${MOD_NETCDF}
 
 # Source code directories
- 
+
 bgp = ../biogeophys
 can = ../canopy
 shr = ../csm_share
 drv = ../driver
 main = ../main
 util = ../utils
- 
+
 # Directory for object files
 
 O = obj
@@ -81,7 +81,7 @@ ${O}/shr_kind_mod.o: ${shr}/shr_kind_mod.F90
 	$(cmplr) -c ${shr}/shr_kind_mod.F90
 	mv shr_kind_mod.o ${O}
 
-${O}/shr_file_mod.o: ${shr}/shr_file_mod.F90 ${O}/shr_kind_mod.o ${O}/clm_varctl.o  ${O}/abortutils.o 
+${O}/shr_file_mod.o: ${shr}/shr_file_mod.F90 ${O}/shr_kind_mod.o ${O}/clm_varctl.o  ${O}/abortutils.o
 	$(cmplr) -c ${shr}/shr_file_mod.F90
 	mv shr_file_mod.o ${O}
 

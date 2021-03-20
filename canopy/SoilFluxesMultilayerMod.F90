@@ -153,7 +153,7 @@ contains
     ! Soil heat flux
 
     gsoi(p) = thk(c,snl(c)+1) * (tg(p) - t_soisno(c,snl(c)+1)) / (z(c,snl(c)+1)-zi(c,snl(c)))
-       
+
     ! Error check
 
     err = rnsoi(p) - shsoi(p) - lhsoi(p) - gsoi(p)

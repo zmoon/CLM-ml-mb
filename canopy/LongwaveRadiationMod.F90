@@ -116,7 +116,7 @@ contains
 
        ! Intercepted radiation is reflected
 
-       rho = omega 
+       rho = omega
        tau = 0._r8
 
        ! Intercepted radiation is both reflected and transmitted

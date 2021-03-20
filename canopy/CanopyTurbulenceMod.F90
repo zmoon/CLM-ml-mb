@@ -3,7 +3,7 @@ module CanopyTurbulenceMod
   !-----------------------------------------------------------------------
   ! !DESCRIPTION:
   ! Canopy turbulence, aeorodynamic conductances, and scalar profiles using above-
-  ! and within-canopy coupling with a roughness sublayer (RSL) parameterization 
+  ! and within-canopy coupling with a roughness sublayer (RSL) parameterization
   !
   ! !USES:
   use shr_kind_mod, only : r8 => shr_kind_r8
@@ -259,7 +259,7 @@ contains
     ! !DESCRIPTION:
     ! Canopy turbulence, aeorodynamic conductances, and wind/temperature/water vapor
     ! profiles using above- and within-canopy coupling with a roughness sublayer
-    ! (RSL) parameterization 
+    ! (RSL) parameterization
     !
     ! !USES:
     use clm_varctl, only : turb_type, use_scalars
@@ -572,7 +572,7 @@ contains
     end if
 
     ! Resistance at ground
-    
+
 !   zl = 0._r8 - ztop(p)
 !   zu = zs(p,1) - ztop(p)
 !   res = PrSc(p) / (beta * ustar(p)) * (exp(-zl*beta/lm) - exp(-zu*beta/lm))
@@ -856,12 +856,12 @@ contains
     !---------------------------------------------------------------------
 
     LcL_val = LcL
-    
+
     if (LcL_val <= 0._r8) then
 
        ! Unstable case: quadratic equation for beta^2 at LcL_val
 
-       bb = 16._r8 * LcL_val * beta_neutral**4     
+       bb = 16._r8 * LcL_val * beta_neutral**4
        beta = sqrt( 0.5_r8*(-bb + sqrt(bb**2 + 4._r8 * beta_neutral**4)) )
 
     else
@@ -876,7 +876,7 @@ contains
        qq = sqrt(qq)
        rr = 0.5_r8 * (qq + 2._r8*bb**3 - 9._r8*aa*bb*cc + 27._r8*(aa**2)*dd)
        rr = rr**(1._r8/3._r8)
-       beta = -(bb+rr)/(3._r8*aa) - (bb**2 - 3._r8*aa*cc)/(3._r8*aa*rr)    
+       beta = -(bb+rr)/(3._r8*aa) - (bb**2 - 3._r8*aa*cc)/(3._r8*aa*rr)
 
     end if
 
@@ -908,7 +908,7 @@ contains
     real(r8), parameter :: Scvr = Prvr        ! Magnitude of variation of Sc with stability
     real(r8), parameter :: Scsc = Prsc        ! Scale of variation of Sc with stability
     !---------------------------------------------------------------------
-    
+
     Pr = Prn + Prvr * tanh(Prsc*LcL)
     Pr = (1._r8 - beta_neutral/beta_neutral_max) * 1._r8 + beta_neutral/beta_neutral_max*Pr
 
@@ -1577,7 +1577,7 @@ contains
        c2(ic) = -ga_prof(p,ic)
        d2(ic) = rho_dz_over_dt * eair_old(p,ic) / pref(p) &
               + gleaf_et(ic,isun) * (dqsat(ic,isun) * delta(ic,isun) + qsat_term(ic,isun)) &
-              + gleaf_et(ic,isha) * (dqsat(ic,isha) * delta(ic,isha) + qsat_term(ic,isha)) 
+              + gleaf_et(ic,isha) * (dqsat(ic,isha) * delta(ic,isha) + qsat_term(ic,isha))
 
        ! Special case for top canopy layer
 
@@ -1605,8 +1605,8 @@ contains
     ! a2(i)*q(i-1) + b21(i)*T(i) + b22(i)*q(i) + c2(i)*q(i+1) = d2(i)
     !
     ! The solution rewrites these equations so that:
-    ! T(i) = f1(i) - e11(i)*T(i+1) - e12(i)*q(i+1) 
-    ! q(i) = f2(i) - e21(i)*T(i+1) - e22(i)*q(i+1) 
+    ! T(i) = f1(i) - e11(i)*T(i+1) - e12(i)*q(i+1)
+    ! q(i) = f2(i) - e21(i)*T(i+1) - e22(i)*q(i+1)
     !
     ! Note that as used here eair = mol/mol
     !---------------------------------------------------------------------
@@ -1622,7 +1622,7 @@ contains
 
     do ic = 1, ncan(p)
 
-       ! Elements in the 2x2 matrix to invert: 
+       ! Elements in the 2x2 matrix to invert:
        !
        !                      | a b |
        ! B(i) - A(i)*E(i-1) = | c d |
@@ -1652,8 +1652,8 @@ contains
     eair(p,ic) = f2(ic)
 
     do ic = ncan(p)-1, 1, -1
-       tair(p,ic) = f1(ic) - e11(ic)*tair(p,ic+1) - e12(ic)*eair(p,ic+1) 
-       eair(p,ic) = f2(ic) - e21(ic)*tair(p,ic+1) - e22(ic)*eair(p,ic+1) 
+       tair(p,ic) = f1(ic) - e11(ic)*tair(p,ic+1) - e12(ic)*eair(p,ic+1)
+       eair(p,ic) = f2(ic) - e21(ic)*tair(p,ic+1) - e22(ic)*eair(p,ic+1)
     end do
 
     end if
@@ -1764,7 +1764,7 @@ contains
     ! Call lapack solver
 
     call dgesv (neq, nrhs, asolv, neq, ipiv, bsolv, neq, info)
- 
+
     if (info /= 0) then
        call endrun (msg=' ERROR: ScalarProfile: LAPACK solver error')
     end if
@@ -2050,7 +2050,7 @@ contains
     end do
     close (nin)
     call shr_file_freeUnit (nin)
-    
+
     fin = '../canopy/psihatH.dat'
     nin = shr_file_getUnit()
     open (unit=nin, file=trim(fin), action="read", status="old", err=20)
@@ -2394,7 +2394,7 @@ contains
     else                               ! very stable (zeta > 1)
        zlog_m = log(obu/z0m) + 5._r8 - 5._r8*z0m/obu + 5._r8*log(zeta) + zeta - 1._r8
     end if
-      
+
     ! Sensible heat and other scalar fluxes
 
     if (zeta < zetah) then             ! very unstable (zeta < zetah)

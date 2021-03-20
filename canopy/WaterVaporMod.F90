@@ -40,7 +40,7 @@ contains
     !---------------------------------------------------------------------
 
     ! For water vapor (temperature range is 0C to 100C)
- 
+
     real(r8), parameter :: a0 =  6.11213476_r8
     real(r8), parameter :: a1 =  0.444007856_r8
     real(r8), parameter :: a2 =  0.143064234e-01_r8
@@ -50,9 +50,9 @@ contains
     real(r8), parameter :: a6 =  0.892344772e-10_r8
     real(r8), parameter :: a7 = -0.373208410e-12_r8
     real(r8), parameter :: a8 =  0.209339997e-15_r8
- 
+
     ! and for derivative
- 
+
     real(r8), parameter :: b0 =  0.444017302_r8
     real(r8), parameter :: b1 =  0.286064092e-01_r8
     real(r8), parameter :: b2 =  0.794683137e-03_r8
@@ -62,9 +62,9 @@ contains
     real(r8), parameter :: b6 = -0.788037859e-12_r8
     real(r8), parameter :: b7 = -0.114596802e-13_r8
     real(r8), parameter :: b8 =  0.381294516e-16_r8
- 
+
     ! For ice (temperature range is -75C to 0C)
- 
+
     real(r8), parameter :: c0 =  6.11123516_r8
     real(r8), parameter :: c1 =  0.503109514_r8
     real(r8), parameter :: c2 =  0.188369801e-01_r8
@@ -74,9 +74,9 @@ contains
     real(r8), parameter :: c6 =  0.387940929e-09_r8
     real(r8), parameter :: c7 =  0.149436277e-11_r8
     real(r8), parameter :: c8 =  0.262655803e-14_r8
- 
+
     ! and for derivative
- 
+
     real(r8), parameter :: d0 =  0.503277922_r8
     real(r8), parameter :: d1 =  0.377289173e-01_r8
     real(r8), parameter :: d2 =  0.126801703e-02_r8

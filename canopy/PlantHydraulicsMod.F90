@@ -21,7 +21,7 @@ contains
     !
     ! !DESCRIPTION:
     ! Calculate whole-plant leaf-specific conductance (soil-to-leaf)
-    ! 
+    !
     ! !USES:
     use pftconMod, only : pftcon
     use PatchType, only : patch
@@ -84,7 +84,7 @@ contains
     !
     ! !DESCRIPTION:
     ! Calculate soil hydraulic resistance and water uptake from each soil layer
-    ! 
+    !
     ! !USES:
     use clm_varpar, only : nlevsoi
     use clm_varcon, only : pi => rpi, denh2o, grav, mmh2o
@@ -110,13 +110,13 @@ contains
     integer  :: j                                ! Soil layer index
     real(r8) :: s                                ! Soil layer water content relative to saturation (fraction)
     real(r8) :: root_cross_sec_area              ! Root cross-sectional area (m2 root)
-    real(r8) :: root_biomass_density             ! Root biomass density (g biomass / m3 soil) 
-    real(r8) :: root_length_density              ! Root length density (m root / m3 soil) 
+    real(r8) :: root_biomass_density             ! Root biomass density (g biomass / m3 soil)
+    real(r8) :: root_length_density              ! Root length density (m root / m3 soil)
     real(r8) :: root_dist                        ! Mean distance between roots (m)
     real(r8) :: hk                               ! Hydraulic conductivity (mm/s -> mmol/m/s/MPa)
     real(r8) :: soilr1                           ! Soil-to-root resistance (MPa.s.m2/mmol H2O)
     real(r8) :: soilr2                           ! Root-to-stem resistance (MPa.s.m2/mmol H2O)
-    real(r8) :: soilr                            ! Belowground resistance (MPa.s.m2/mmol H2O) 
+    real(r8) :: soilr                            ! Belowground resistance (MPa.s.m2/mmol H2O)
     real(r8) :: smp_mpa(nlevsoi)                 ! Soil matric potential (MPa)
     real(r8) :: evap(nlevsoi)                    ! Maximum transpiration (mmol H2O/m2/s)
     real(r8) :: totevap                          ! Total maximum transpiration (mmol H2O/m2/s)
@@ -185,7 +185,7 @@ contains
 
           soilr2 = root_resist(patch%itype(p)) / (root_biomass_density * dz(c,j))
 
-          ! Belowground resistance (MPa.s.m2/mmol H2O) 
+          ! Belowground resistance (MPa.s.m2/mmol H2O)
 
           soilr = soilr1 + soilr2
 
