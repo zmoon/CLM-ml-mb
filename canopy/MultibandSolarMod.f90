@@ -22,13 +22,19 @@ module MultibandSolarMod
     wlb_nir = [0.7_rk, 2.5_rk]  ! no use going further in wavelength since don't have leaf/soil data
 
   ! Constants for Planck
-  real(rk), parameter :: &
+  real(rk), private, parameter :: &
     h = 6.62607e-34_rk, &  ! Planck constant (J s)
     c = 2.99792e8_rk, &  ! speed of light (m s-1)
     k_B = 1.38065e-23_rk  ! Boltzmann constant (J K-1)
 
 
 contains
+
+
+  !> Print constants to check precision/accuracy
+  subroutine print_constants()
+    print *, 'h, c, k_B', h, c, k_B
+  end subroutine print_constants
 
 
   !> Compute Planck radiance L(T, wl)

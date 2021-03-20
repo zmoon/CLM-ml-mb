@@ -32,7 +32,7 @@ program test
 
   !> Planck radiance
   print *, '!> Planck radiance L'
-  print *, 'h, c, k_B', h, c, k_B
+  call print_constants()
   print *, 'L(6000 K, 1 um):', l_wl_planck(6000._rk, 1._rk) / 1.e9 / 1.e4
   print *, '  should be: ~ 1.191 W/(sr m2)/m'
   print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_rk, [0.5_rk, 1._rk, 1.5_rk]) / 1.e9 / 1.e4
