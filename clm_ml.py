@@ -129,7 +129,7 @@ def out_and_back(p):
 def build():
     """Build the model with `make`."""
     with out_and_back(EXE_DIR):
-        subprocess.run(["make"], check=True)
+        subprocess.run(["make"], check=True)  # TODO: update for Meson
 
 
 def run(*, nsb=1, subdir=""):
