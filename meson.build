@@ -119,7 +119,7 @@ deps = [
   # dependency('netcdf', language: 'fortran', required: true),
   fc.find_library('netcdff'),  # ^ above not working
   fc.find_library('blas'),
-  fc.find_library('lapack'),
+  fc.find_library('lapack'),  # TODO: look for MKL first?
   fc.find_library('m'),  # doesn't seem to actually be used
 ]
 if on_aci
