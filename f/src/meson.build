@@ -29,7 +29,12 @@ if r.returncode() != 0
     'Set `f_inc_netcdf` manually in `meson.build`?'
   )
 endif
-f_inc_netcdf = '-I' + r.stdout().strip()
+inc_netcdf = r.stdout().strip()
+msys2 = inc_netcdf.contains('mingw64') and build_machine.system() == 'windows'  # on Windows using MSYS2
+if msys2
+  inc_netcdf = 'C:/msys64' + inc_netcdf  # TODO: presumptuous about the MSYS2 location
+endif
+f_inc_netcdf = '-I' + inc_netcdf
 
 # Set options for compiling the objects
 dialect += f_inc_netcdf
@@ -122,6 +127,9 @@ deps = [
   fc.find_library('lapack'),  # TODO: look for MKL first?
   fc.find_library('m'),  # doesn't seem to actually be used
 ]
+if msys2
+  deps += fc.find_library('netcdf')
+endif
 if on_aci
   # ACI's libnetcdff needs more supporting libs (not all covered by `nf-config --flibs`)
   # Note: presumably could use `find_library` for this too

@@ -28,6 +28,23 @@ Note
 sudo apt install gfortran libnetcdf-dev libnetcdff-dev libblas-dev liblapack-dev meson ninja-build
 ```
 
+### Windows (MSYS2)
+
+The `meson.build` assumes that `C:/msys64` is the location of the [MSYS2](https://www.msys2.org/) installation.
+
+1. To get `gfortran`(`.exe`) and most of the Fortran dependencies, open MSYS2 and:
+   ```bash
+   pacman -S mingw64/mingw-w64-x86_64-gcc-fortran mingw64/mingw-w64-x86_64-netcdf mingw64/mingw-w64-x86_64-lapack
+   ```
+   That LAPACK includes `libblas`.
+
+2. [Download](https://www.unidata.ucar.edu/downloads/netcdf/) NetCDF-Fortran and [build from source](https://www.unidata.ucar.edu/software/netcdf/docs/building_netcdf_fortran.html) with `NCDIR=/mingw64`, `FC=gfortran`, `NFDIR=$NCDIR`.
+
+3. Install Meson and Ninja to Windows. For example, into the Conda env.
+
+For me, the model runs faster on [WSL](https://docs.microsoft.com/en-us/windows/wsl/about), though.
+
+
 <!-- TODO: Conda, Brew  -->
 
 
@@ -40,6 +57,7 @@ Or, without leaving the repo root:
 ```bash
 meson setup f/src/build f/src && meson compile -C f/src/build
 ```
+
 
 ## Original Bonan notes
 
