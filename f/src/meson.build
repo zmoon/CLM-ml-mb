@@ -1,4 +1,4 @@
-project('CLM-ml-zm', 'fortran',
+project('CLM-ml-mb', 'fortran',
   default_options: [
     # Compiler-agnostic dialect settings supported by Meson
     'fortran_std=f2008',
