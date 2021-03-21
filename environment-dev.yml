@@ -1,0 +1,20 @@
+name: clm-ml-dev
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - ipython
+  #
+  # used by `clm_ml` explicitly
+  - f90nml
+  - numpy
+  - pandas
+  - xarray
+  #
+  # extras
+  - joblib
+  - matplotlib
+  - netCDF4
+  #
+  # dev
+  - pytest

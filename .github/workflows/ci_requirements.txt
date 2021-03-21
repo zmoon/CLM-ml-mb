@@ -1,0 +1,10 @@
+# build
+meson<0.57.1  # currently a bug for `.F*` extensions in 0.57.1
+ninja
+# run py (clm_ml)
+f90nml
+numpy
+pandas
+xarray
+# test
+pytest

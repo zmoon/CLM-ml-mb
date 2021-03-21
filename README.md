@@ -1,28 +1,45 @@
-# CLM-ml-zm
-Running Gordon Bonan's CLM-ml
-* With more options
-* With Python (to come)
+# CLM-ml-mb
+Running Gordon Bonan's CLM-ml, with
+* more options
+* Python
+* multiple sub-bands per waveband in the solar RT (hence `-mb`)
 
 Note
-* Bonan has the source code for the multilayer canopy part (here in `./canopy`) at [gbonan/CLM-ml_v0](https://github.com/gbonan/CLM-ml_v0),
+* Bonan has the source code for the multilayer canopy part (here in [`f/src/canopy`](f/src/canopy)) at [gbonan/CLM-ml_v0](https://github.com/gbonan/CLM-ml_v0),
   which goes with a 2018 GMD paper: doi:[10.5194/gmd-11-1467-2018](https://doi.org/10.5194/gmd-11-1467-2018)
 
 
 ## Dependencies
+
+* Cloning the repo
+  - [Git LFS](https://git-lfs.github.com/) (to download the `.nc` files)
+* Build/compile
+  - build system: [Meson](https://mesonbuild.com/) + [Ninja](https://ninja-build.org/)
+  - compiler: Fortran compiler (currently only GNU `gfortran` is supported in [the `meson.build`](f/src/meson.build))
+  - libraries: NetCDF-Fortran, LAPACK, BLAS
+* Running with Python
+  - see [test/requirements.txt](./test/requirements.txt)
 
 ### Ubuntu
 
 (or other Linux with `apt`)
 
 ```bash
-sudo apt install gfortran libnetcdf-dev libnetcdff-dev libblas-dev liblapack-dev
+sudo apt install gfortran libnetcdf-dev libnetcdff-dev libblas-dev liblapack-dev meson ninja-build
 ```
-
-Set `LIB_NETCDF` and `MOD_NETCDF` in the Makefile to the output of `nf-config --includedir` (for me in Jan 2021, `/usr/include`).
-
 
 <!-- TODO: Conda, Brew  -->
 
+
+## Building the model
+
+1. Navigate into `f/src` and invoke `meson setup build`
+2. Enter `build` and invoke `meson compile` or `ninja`
+
+Or, without leaving the repo root:
+```bash
+meson setup f/src/build f/src && meson compile -C f/src/build
+```
 
 ## Original Bonan notes
 

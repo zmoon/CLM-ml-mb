@@ -7,7 +7,7 @@ import clm_ml
 
 def get_fouts(validate=True):
     """Return list of the output file paths, doing some validation"""
-    fouts = list(clm_ml.OUT_DIR.glob("*.out"))
+    fouts = list(clm_ml.F_OUTPUT_DIR.glob("*.out"))
     if validate:  # make sure we have the right number and that they are all recent
         now = datetime.datetime.now()
         assert len(fouts) == 3

@@ -26,9 +26,6 @@ def test_run_output_sb():
     utils.compare_fouts_to_orig()
 
 
-@pytest.mark.parametrize(
-    "which",
-    ["flux", "aux", "profile"]
-)
+@pytest.mark.parametrize("which", ["flux", "aux", "profile"])
 def test_load_out_ds(which):
     clm_ml.load_out_ds(which)

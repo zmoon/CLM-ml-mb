@@ -25,7 +25,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip setuptools wheel
-          python -m pip install -r test/requirements.txt
+          python -m pip install -r .github/workflows/ci_requirements.txt
 
       - name: Install CLM-ml dependencies
         run: |
@@ -33,9 +33,10 @@ jobs:
 
       - name: Compile the CLM-ml executable
         run: |
-          cd exe
-          make
-          cd ../
-          
-      - name: Test
+          meson setup f/src/build f/src && meson compile -C f/src/build
+
+      - name: Test (pytest)
         run: python -m pytest
+
+      - name: Test (Ninja)
+        run: ninja test -C f/src/build
