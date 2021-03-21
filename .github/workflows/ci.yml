@@ -33,9 +33,7 @@ jobs:
 
       - name: Compile the CLM-ml executable
         run: |
-          cd exe
-          make
-          cd ../
+          meson setup f/build f && meson compile -C f/build
 
       - name: Test
         run: python -m pytest

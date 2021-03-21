@@ -1,4 +1,7 @@
-# run
+# build
+meson<=0.57.1  # currently a bug for `.F*` extensions
+ninja
+# run py
 f90nml
 netCDF4
 numpy
