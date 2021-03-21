@@ -1,5 +1,5 @@
 # build
-meson<=0.57.1  # currently a bug for `.F*` extensions
+meson<0.57.1  # currently a bug for `.F*` extensions in 0.57.1
 ninja
 # run py
 f90nml
