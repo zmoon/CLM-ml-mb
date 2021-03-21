@@ -35,5 +35,8 @@ jobs:
         run: |
           meson setup f/src/build f/src && meson compile -C f/src/build
 
-      - name: Test
+      - name: Test (pytest)
         run: python -m pytest
+
+      - name: Test (Ninja)
+        run: ninja test -C f/src/build
