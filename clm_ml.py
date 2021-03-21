@@ -13,8 +13,10 @@ import xarray as xr
 
 
 REPO_BASE = Path(__file__).parent
-EXE_DIR = REPO_BASE / "exe"
-OUT_DIR = REPO_BASE / "output"
+FORT_BASE = REPO_BASE / "f"
+EXE_DIR = FORT_BASE / "exe"
+OUT_DIR = FORT_BASE / "output"  # model output
+BUILD_DIR = FORT_BASE / "build"  # Meson build dir
 
 # See `driver/CLMml_driver.F90` for `write` calls and variable definitions
 # nout1 - *_flux.out - canopy fluxes
@@ -136,8 +138,8 @@ def out_and_back(p):
 
 def build():
     """Build the model with `make`."""
-    with out_and_back(EXE_DIR):
-        subprocess.run(["make"], check=True)  # TODO: update for Meson
+    with out_and_back(BUILD_DIR):
+        subprocess.run(["ninja"], check=True)
 
 
 def run(*, nsb=1, subdir=""):
@@ -155,5 +157,5 @@ def run(*, nsb=1, subdir=""):
 
     # Try to run
     s_nml = str(nml) + "\n"  # complains without newline at the end
-    with out_and_back(EXE_DIR):
-        subprocess.run(["./prgm.exe"], input=s_nml, text=True, check=True)
+    with out_and_back(BUILD_DIR):
+        subprocess.run(["./clm-ml"], input=s_nml, text=True, check=True)
