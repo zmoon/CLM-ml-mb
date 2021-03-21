@@ -186,9 +186,9 @@ contains
 
     ! Input and output directories
 
-    diratm = '../input/tower-forcing/'
-    dirclm = '../input/clm4_5/'
-    dirout = '../output/'
+    diratm = '../../input/tower-forcing/'
+    dirclm = '../../input/clm4_5/'
+    dirout = '../../output/'
 
     if ( len(trim(subdir)) > 0 ) then
       if ( subdir(len(trim(subdir)):len(trim(subdir))) /= '/' ) stop '`subdir` must have trailing `/`'

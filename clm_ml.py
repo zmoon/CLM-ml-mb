@@ -16,7 +16,8 @@ REPO_BASE = Path(__file__).parent
 F_BASE = REPO_BASE / "f"
 F_INPUT_DIR = F_BASE / "input"  # model input
 F_OUTPUT_DIR = F_BASE / "output"  # model output
-F_BUILD_DIR = F_BASE / "build"  # Meson build dir
+F_SRC_DIR = F_BASE / "src"  # model source code
+F_BUILD_DIR = F_SRC_DIR / "build"  # Meson build dir
 
 # See `driver/CLMml_driver.F90` for `write` calls and variable definitions
 # nout1 - *_flux.out - canopy fluxes

@@ -32,12 +32,12 @@ sudo apt install gfortran libnetcdf-dev libnetcdff-dev libblas-dev liblapack-dev
 
 ## Building the model
 
-1. Navigate into `f` and invoke `meson setup build`
+1. Navigate into `f/src` and invoke `meson setup build`
 2. Enter `build` and invoke `meson compile` or `ninja`
 
 Or, without leaving the repo root:
 ```bash
-meson setup f/build f && meson compile -C f/build
+meson setup f/src/build f/src && meson compile -C f/src/build
 ```
 
 ## Original Bonan notes
