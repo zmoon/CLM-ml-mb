@@ -186,8 +186,8 @@ contains
 
     ! Input and output directories
 
-    diratm = '../tower-forcing/'
-    dirclm = '../clm4_5/'
+    diratm = '../input/tower-forcing/'
+    dirclm = '../input/clm4_5/'
     dirout = '../output/'
 
     if ( len(trim(subdir)) > 0 ) then

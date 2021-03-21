@@ -13,10 +13,10 @@ import xarray as xr
 
 
 REPO_BASE = Path(__file__).parent
-FORT_BASE = REPO_BASE / "f"
-EXE_DIR = FORT_BASE / "exe"
-OUT_DIR = FORT_BASE / "output"  # model output
-BUILD_DIR = FORT_BASE / "build"  # Meson build dir
+F_BASE = REPO_BASE / "f"
+F_INPUT_DIR = F_BASE / "input"  # model input
+F_OUTPUT_DIR = F_BASE / "output"  # model output
+F_BUILD_DIR = F_BASE / "build"  # Meson build dir
 
 # See `driver/CLMml_driver.F90` for `write` calls and variable definitions
 # nout1 - *_flux.out - canopy fluxes
@@ -84,7 +84,7 @@ def load_out_ds(which="flux", *, subdir=""):
         raise ValueError("invalid `which`")
 
     # Load data
-    data = np.loadtxt(OUT_DIR / subdir / f"US-UMB_2006-07_{which}.out")
+    data = np.loadtxt(F_OUTPUT_DIR / subdir / f"US-UMB_2006-07_{which}.out")
     assert data.shape[1] == len(OUT_VARS[which])
 
     # Construct times
@@ -138,13 +138,13 @@ def out_and_back(p):
 
 def build():
     """Build the model with `make`."""
-    with out_and_back(BUILD_DIR):
+    with out_and_back(F_BUILD_DIR):
         subprocess.run(["ninja"], check=True)
 
 
 def run(*, nsb=1, subdir=""):
     # Read default nml
-    with open(EXE_DIR / "namelists/nl.US-UMB.2006", "r") as f:
+    with open(F_INPUT_DIR / "namelists/nl.US-UMB.2006", "r") as f:
         nml = f90nml.read(f)
 
     # Update nml with user settings
@@ -152,10 +152,10 @@ def run(*, nsb=1, subdir=""):
     nml["clm_inparm"]["subdir"] = subdir
 
     # Create output subdir if it doesn't exist
-    p_subdir = OUT_DIR / subdir
+    p_subdir = F_OUTPUT_DIR / subdir
     p_subdir.mkdir(exist_ok=True)
 
     # Try to run
     s_nml = str(nml) + "\n"  # complains without newline at the end
-    with out_and_back(BUILD_DIR):
+    with out_and_back(F_BUILD_DIR):
         subprocess.run(["./clm-ml"], input=s_nml, text=True, check=True)
