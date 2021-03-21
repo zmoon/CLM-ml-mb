@@ -81,8 +81,8 @@ src_bgp = [
   'biogeophys/WaterStateType.F90',
 ]
 src_mb = [
-  'canopy/MultibandSolarDataMod.f90',
-  'canopy/MultibandSolarMod.f90',
+  'canopy/multiband/MultibandSolarDataMod.f90',
+  'canopy/multiband/MultibandSolarMod.f90',
 ]
 src_canopy = [
   'canopy/CanopyFluxesMultilayerMod.F90',
@@ -136,5 +136,5 @@ executable('clm-ml',
 )
 
 # Create multiband test program and mark it as a test
-test_mb_exe = executable('test_mb', src_mb + ['canopy/test_MultibandSolarMod.f90'])
+test_mb_exe = executable('test_mb', src_mb + ['canopy/multiband/test_MultibandSolarMod.f90'])
 test('test_mb', test_mb_exe)

@@ -14,7 +14,7 @@ module MultibandSolarMod
   ! Relative path to the location of the data files (so it matters where the code is run from)
   character(len=*), private, parameter :: &
     ! refspecbasepath = "./"  ! for testing
-    refspecbasepath = "../canopy/"  ! when running CLM-ml
+    refspecbasepath = "../canopy/multiband/"  ! when running CLM-ml (not needed though)
 
   ! Wavelength bounds for some common bands (um)
   real(rk), dimension(2), parameter :: &
