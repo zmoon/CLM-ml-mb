@@ -1,10 +1,11 @@
-# CLM-ml-zm
-Running Gordon Bonan's CLM-ml
-* With more options
-* With Python
+# CLM-ml-mb
+Running Gordon Bonan's CLM-ml, with
+* more options
+* Python
+* multiple sub-bands per waveband in the solar RT (hence `-mb`)
 
 Note
-* Bonan has the source code for the multilayer canopy part (here in `./canopy`) at [gbonan/CLM-ml_v0](https://github.com/gbonan/CLM-ml_v0),
+* Bonan has the source code for the multilayer canopy part (here in [`f/src/canopy`](f/src/canopy)) at [gbonan/CLM-ml_v0](https://github.com/gbonan/CLM-ml_v0),
   which goes with a 2018 GMD paper: doi:[10.5194/gmd-11-1467-2018](https://doi.org/10.5194/gmd-11-1467-2018)
 
 
