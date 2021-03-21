@@ -4,7 +4,7 @@ Test the output files -- generation (running the model), loading, etc.
 import pytest
 
 import clm_ml
-import utils
+import utils  # noreorder
 
 
 @pytest.mark.slow
@@ -18,12 +18,12 @@ def test_run_output_reg():
 
 
 @pytest.mark.slow
-@pytest.mark.xfail(strict=True)
 def test_run_output_sb():
     """With 2 sub-bands, the output will be different."""
     clm_ml.build()
     clm_ml.run(nsb=2)
-    utils.compare_fouts_to_orig()
+    with pytest.raises(AssertionError):  # "Arrays are not equal"
+        utils.compare_fouts_to_orig()
 
 
 @pytest.mark.parametrize("which", ["flux", "aux", "profile"])
