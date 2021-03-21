@@ -1,9 +1,8 @@
 # build
 meson<0.57.1  # currently a bug for `.F*` extensions in 0.57.1
 ninja
-# run py
+# run py (clm_ml)
 f90nml
-netCDF4
 numpy
 pandas
 xarray
