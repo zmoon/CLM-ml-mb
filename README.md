@@ -15,7 +15,7 @@ Note
   - [Git LFS](https://git-lfs.github.com/) (to download the `.nc` files)
 * Build/compile
   - build system: [Meson](https://mesonbuild.com/) + [Ninja](https://ninja-build.org/)
-  - compiler: Fortran compiler (currently only GNU `gfortran` is supported in the `meson.build`)
+  - compiler: Fortran compiler (currently only GNU `gfortran` is supported in [the `meson.build`](f/src/meson.build))
   - libraries: NetCDF-Fortran, LAPACK, BLAS
 * Running with Python
   - see [test/requirements.txt](./test/requirements.txt)
