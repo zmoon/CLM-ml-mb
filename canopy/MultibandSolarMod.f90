@@ -12,7 +12,7 @@ module MultibandSolarMod
   integer, parameter :: nwl_leaf = 2101, nwl_solar = 122, nwl_soil = 2101
 
   ! Relative path to the location of the data files (so it matters where the code is run from)
-  character(len=*), parameter :: &
+  character(len=*), private, parameter :: &
     ! refspecbasepath = "./"  ! for testing
     refspecbasepath = "../canopy/"  ! when running CLM-ml
 

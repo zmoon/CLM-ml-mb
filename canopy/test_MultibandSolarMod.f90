@@ -1,4 +1,4 @@
-!> Test out the functionality of the multi-band mod
+!> Test out the functionality/API of the multi-band mod
 !> In Bash, use this one-liner in this directory to run:
 !> gfortran -c -ffree-line-length-none MultibandSolarDataMod.f90 && gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o MultibandSolarDataMod.o && ./a.out
 program test
@@ -35,7 +35,7 @@ program test
   call print_constants()
   print *, 'L(6000 K, 1 um):', l_wl_planck(6000._rk, 1._rk) / 1.e9 / 1.e4
   print *, '  should be: ~ 1.191 W/(sr m2)/m'
-  print *, 'L(600 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_rk, [0.5_rk, 1._rk, 1.5_rk]) / 1.e9 / 1.e4
+  print *, 'L(6000 K, [0.5, 1.0, 1.5] um):', l_wl_planck(6000.0_rk, [0.5_rk, 1._rk, 1.5_rk]) / 1.e9 / 1.e4
 
   !> Planck radiance definite integrals
   print *
