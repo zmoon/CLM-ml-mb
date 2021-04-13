@@ -2,8 +2,8 @@
 !> In Bash, use this one-liner in this directory to run:
 !> gfortran -c -ffree-line-length-none MultibandSolarDataMod.f90 && gfortran -c -Wall MultibandSolarMod.f90 -I../exe && gfortran -Wall test_MultibandSolarMod.f90 -I../exe MultibandSolarMod.o MultibandSolarDataMod.o && ./a.out
 program test
-  use mb_data, only: rk
-  use mb
+  use m_mb_data, only: rk
+  use m_mb
   implicit none
 
   real(rk), parameter :: pi = 4*atan(1._rk)

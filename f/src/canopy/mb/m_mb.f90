@@ -3,8 +3,8 @@
 !> * leaf reflectance/transmittance
 !> * soil reflectance (albedo)
 !> * direct/diffuse irradiance
-module mb
-  use mb_data, only: rk
+module m_mb
+  use m_mb_data, only: rk
   implicit none
 
   ! Number of wavelengths in each of the spectrum shape definitions
@@ -197,7 +197,7 @@ contains
     wle,  &
     wl, dwl, rl, tl, rs, idr, idf  &
   )
-    use mb_data  ! reference spectra
+    use m_mb_data  ! reference spectra
     real(rk), intent(in) :: wlbi(2)  ! wl bounds for the single band for the input values
     real(rk), intent(in) :: rli, tli, rsi, idri, idfi  ! input values (single band)
     real(rk), dimension(:), intent(in) :: wle  ! wavelength bounds for new grid
@@ -251,7 +251,7 @@ contains
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
   function distribute(wlbi, yi, wle, which, weight) result(y)
-    use mb_data  ! reference spectra
+    use m_mb_data  ! reference spectra
     real(rk), intent(in) :: wlbi(2), yi, wle(:)
     character(len=*), intent(in) :: which
     logical, intent(in), optional :: weight
@@ -318,4 +318,4 @@ contains
   ! * replace CRT outputs by the PAR and NIR integrated ones
 
 
-end module mb
+end module m_mb

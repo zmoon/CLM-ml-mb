@@ -86,8 +86,8 @@ src_bgp = [
   'biogeophys/WaterStateType.F90',
 ]
 src_mb = [
-  'canopy/mb/mb.f90',
-  'canopy/mb/mb_data.f90',
+  'canopy/mb/m_mb.f90',
+  'canopy/mb/m_mb_data.f90',
 ]
 src_canopy = [
   'canopy/CanopyFluxesMultilayerMod.F90',
