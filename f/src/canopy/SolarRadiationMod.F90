@@ -12,7 +12,7 @@ module SolarRadiationMod
   use PatchType, only : patch
   use SurfaceAlbedoType, only : surfalb_type
   use CanopyFluxesMultilayerType, only : mlcanopy_type
-  use MultiBandSolarMod, only: distribute, wle_equal_width, wlb_par, wlb_nir
+  use mb, only: distribute, wle_equal_width, wlb_par, wlb_nir
   !
   ! !PUBLIC TYPES:
   implicit none

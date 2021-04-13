@@ -1,5 +1,5 @@
 !> Data -- example/reference spectra for leaf/soil optical properties and direct/diffuse spectral irradiance
-module MultibandSolarDataMod
+module mb_data
 use iso_fortran_env, only: rk => real64
 
 !> Wavelength for leaf and soil spectra
@@ -484,4 +484,4 @@ real(rk), dimension(122), parameter :: sidf0 = [ &
   2.61593e-01_rk, 2.65348e-01_rk &
 ]
 
-end module MultibandSolarDataMod
+end module mb_data
