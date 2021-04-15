@@ -39,7 +39,8 @@ contains
 
     namelist /clm_inparm/ light, nsb, gstyp, use_colim, use_acclim, use_clm45kn, &
        use_tower, use_init, use_hvap, tower, tower_yrbeg, tower_yrend, tower_month, &
-       diratm, dirclm, dirini, dirout, run_spinup, turb_type, subdir
+       diratm, dirclm, dirini, dirout, run_spinup, turb_type, subdir, &
+       lai_mult, sai_mult
     !---------------------------------------------------------------------
 
     !---------------------------------------------------------------------

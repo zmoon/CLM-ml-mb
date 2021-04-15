@@ -4,6 +4,7 @@ Run the model (only default setup/case so far)
 import contextlib
 import os
 import subprocess
+import warnings
 from pathlib import Path
 
 import f90nml
@@ -143,18 +144,25 @@ def build():
         subprocess.run(["ninja"], check=True)
 
 
-def run(*, nsb=1, subdir=""):
+def run(**nml_kwargs):
+    """Run CLM-ml. `**nml_kwargs` are used to update the model's input namelist."""
     # Read default nml
     with open(F_INPUT_DIR / "namelists/nl.US-UMB.2006", "r") as f:
         nml = f90nml.read(f)
 
     # Update nml with user settings
-    nml["clm_inparm"]["nsb"] = nsb
-    nml["clm_inparm"]["subdir"] = subdir
+    allowed_nml_kwargs = list(nml["clm_inparm"].keys())
+    ignored_nml_kwargs = [k for k in nml_kwargs if k not in allowed_nml_kwargs]
+    if ignored_nml_kwargs:
+        warnings.warn(
+            f"the following nml keywords will be ignored: {', '.join(ignored_nml_kwargs)}"
+        )
+    nml["clm_inparm"].update({k: v for k, v in nml_kwargs.items() if k in allowed_nml_kwargs})
 
     # Create output subdir if it doesn't exist
+    subdir = nml_kwargs.get("subdir", "")
     p_subdir = F_OUTPUT_DIR / subdir
-    p_subdir.mkdir(exist_ok=True)
+    p_subdir.mkdir(exist_ok=True, parents=True)
 
     # Try to run
     s_nml = str(nml) + "\n"  # complains without newline at the end

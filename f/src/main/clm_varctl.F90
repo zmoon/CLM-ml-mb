@@ -9,7 +9,6 @@ module clm_varctl
   implicit none
 
   integer :: light                  ! Radiative transfer: 1 = Norman. 2 = Goudriaan. 3 = Two-stream
-  integer :: nsb                    ! # of equal-width sub-bands to divide each waveband into when doing canopy RT
   integer :: gstyp                  ! Stomatal conductance: Medlyn (0), Ball-Berry (1), or WUE optimization (2)
   integer :: turb_type              ! Turbulence parameterization
   integer :: pad_type               ! Plant area density: No stem area (0) or use beta distribution (1) or uniform distribution (2)
@@ -34,6 +33,10 @@ module clm_varctl
 
   real(r8) :: dtime_sub             ! Model sub-timestep (s)
 
+  ! Below added by zm
+  integer :: nsb                ! # of equal-width sub-bands to divide each waveband into when doing canopy RT
   character(len=256) :: subdir  ! subdir for output files (must have trailing `/` and must exist!)
+  real(r8) :: lai_mult          ! multiplier to adjust LAI when it is loaded from the clm4_5 file
+  real(r8) :: sai_mult          ! ...                  SAI ...
 
 end module clm_varctl

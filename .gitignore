@@ -5,6 +5,8 @@ exe/*.exe
 a.out
 canopy/*.o
 
+.vscode/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

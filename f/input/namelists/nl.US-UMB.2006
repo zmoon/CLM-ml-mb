@@ -19,4 +19,6 @@ dirclm      = '/home/bonan/dev/mlcan/clm4_5/'
 dirini      = '/home/bonan/dev/mlcan/model-init/'
 dirout      = '/project/bgc01/bonan/flux-tower/output/'
 subdir      = ''
+lai_mult    = 1.
+sai_mult    = 1.
 /

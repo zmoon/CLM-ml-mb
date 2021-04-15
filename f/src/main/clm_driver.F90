@@ -25,7 +25,7 @@ contains
     ! Main CLM model driver to calculate fluxes
     !
     ! !USES:
-    use clm_varctl, only : iulog
+    use clm_varctl, only : iulog, lai_mult, sai_mult
     use clm_varpar, only : nlevgrnd, nlevsoi, nlevsno, isun, isha
     use clm_varcon, only : mmh2o, mmdry
     use TowerDataMod, only : tower_id
@@ -169,8 +169,8 @@ contains
 
        ! Values for current time step
 
-       lai(p) = elai(p)
-       sai(p) = esai(p)
+       lai(p) = elai(p) * lai_mult
+       sai(p) = esai(p) * sai_mult
 
        ! Update profile for current value
 

@@ -101,7 +101,7 @@ contains
     forc_pco2  => atm2lnd_inst%forc_pco2_grc             , &  ! Atmospheric CO2 partial pressure (Pa)
     forc_po2   => atm2lnd_inst%forc_po2_grc              , &  ! Atmospheric O2 partial pressure (Pa)
     forc_solad => atm2lnd_inst%forc_solad_grc            , &  ! Atmospheric direct beam radiation (W/m2)
-    forc_solai => atm2lnd_inst%forc_solai_grc            , &  ! Atmosphericdiffuse radiation (W/m2)
+    forc_solai => atm2lnd_inst%forc_solai_grc            , &  ! Atmospheric diffuse radiation (W/m2)
     forc_t     => atm2lnd_inst%forc_t_downscaled_col     , &  ! Atmospheric temperature (K)
     forc_q     => atm2lnd_inst%forc_q_downscaled_col     , &  ! Atmospheric specific humidity (kg/kg)
     forc_pbot  => atm2lnd_inst%forc_pbot_downscaled_col  , &  ! Atmospheric pressure (Pa)

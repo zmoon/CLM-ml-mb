@@ -219,7 +219,7 @@ contains
     ! Read CLM history file to initialize canopy leaf area and define layers
     !
     ! !USES:
-    use clm_varctl, only : use_tower, pad_type, iulog, use_ncan
+    use clm_varctl, only : use_tower, pad_type, iulog, use_ncan, lai_mult, sai_mult
     use clm_varpar, only : mxpft, nlevcan
     use TowerDataMod, only : tower_pft, tower_canht, tower_id, tower_ht
     use MathToolsMod, only : beta_function, log_gamma_function
@@ -322,8 +322,8 @@ contains
     !---------------------------------------------------------------------
 
     do p = begp, endp
-       lai(p) = elai_mod(1,1,1)
-       sai(p) = esai_mod(1,1,1)
+       lai(p) = elai_mod(1,1,1) * lai_mult
+       sai(p) = esai_mod(1,1,1) * sai_mult
        patch%itype(p) = tower_pft(it)
        root_biomass(p) = 500._r8     ! Fine root biomass (g biomass / m2)
     end do
