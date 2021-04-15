@@ -63,7 +63,7 @@ PROFILE_OUT_VARS = [
     ("lhl", "Canopy layer latent heat flux", "W m-2"),
     ("fcl", "Canopy layer CO2 flux", "umol CO2 m-2 s-1"),
     ("apar", "Leaf absorbed PAR", "umol photon (m2 leaf)-1 s-1"),
-    ("gs", "Leaf stomatal conductance", "mol H2O (m2 leaf)-1 s-1"),
+    ("gl", "Leaf stomatal conductance", "mol H2O (m2 leaf)-1 s-1"),
     ("lwp", "Leaf water potential", "MPa"),
     ("tveg", "Vegetation temperature", "K"),
     ("wind", "Wind speed", "m s-1"),
