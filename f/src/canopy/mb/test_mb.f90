@@ -87,7 +87,7 @@ program test
   !> Basic smearing test
   x1 = [ (real(i, rk), i = 0, 10) ]
   y1 = 25 - (x1 - 5)**2  ! inverted parabola, true integral is 500/3 ~ 166.67
-  bins1 = [0., 2.5, 7., 8., 9., 10.]
+  bins1 = [0._rk, 2.5_rk, 7._rk, 8._rk, 9._rk, 10._rk]
   n = ubound(bins1, dim=1)
   dbins1 = bins1(2:n) - bins1(1:n-1)
   ynew1 = smear(x1, y1, bins1)
@@ -102,7 +102,7 @@ program test
   if ( sum(ynew1 * dbins1) /= trapz(x1, y1) ) stop "smear no good"  ! TODO: function for this check
 
   !> Smear leaf
-  wle1 = [0.4, 0.7, 1.0, 2.5]  ! note: same endpoints as orig
+  wle1 = [0.4_rk, 0.7_rk, 1.0_rk, 2.5_rk]  ! note: same endpoints as orig
   n = ubound(wle1, dim=1)
   dwl1 = wle1(2:n) - wle1(1:n-1)
   rl1 = smear(wl0_leaf, rl0, wle1)
@@ -116,14 +116,14 @@ program test
   !> Smear soil
 
   !> Full distribute-rad routine
-  wlbi = [0.4, 0.7]  ! (um) PAR band edges
-  ! wlbi = [0.7, 2.5]  ! NIR
-  rli = 0.2
-  tli = 0.15
-  rsi = 0.25
+  wlbi = [0.4_rk, 0.7_rk]  ! (um) PAR band edges
+  ! wlbi = [0.7_rk, 2.5_rk]  ! NIR
+  rli = 0.2_rk
+  tli = 0.15_rk
+  rsi = 0.25_rk
   idri = 500
   idfi = 100
-  wle = [0.4, 0.5, 0.6, 0.7]  ! new band edges for PAR region
+  wle = [0.4_rk, 0.5_rk, 0.6_rk, 0.7_rk]  ! new band edges for PAR region
   ! wle = [0.7, 1.0, 1.5, 2.5]  ! NIR
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle, wl, dwl, rl, tl, rs, idr, idf)
   print *
@@ -148,8 +148,8 @@ program test
   print fmt1, 'idf', idfi, '->', distribute(wlbi, idfi, wle, 'idf')
 
   !> Smear rl in NIR
-  wlbi2 = [0.8, 2.5]
-  wle3 = [0.8, 1.1, 1.8, 2.5]
+  wlbi2 = [0.8_rk, 2.5_rk]
+  wle3 = [0.8_rk, 1.1_rk, 1.8_rk, 2.5_rk]
   print *
   print *, "!> distribute rl to the NIR"
   print fmt1, "rl", rli, '->', distribute(wlbi2, rli, wle3, 'rl')
