@@ -25,6 +25,6 @@ def compare_fouts_to_orig(fouts=None):
 
     for fout in fouts:
         bn = fout.name
-        new = np.loadtxt(fout)
         orig = np.loadtxt(clm_ml.REPO_BASE / "test/data/output" / bn)
+        new = np.loadtxt(fout)[:, : orig.shape[1]]
         np.testing.assert_equal(new, orig)

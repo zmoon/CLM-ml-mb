@@ -137,6 +137,12 @@ def load_out_ds(which="flux", *, subdir=""):
         )
 
 
+def load_all(subdir=""):
+    """Load all output data, return a combined dataset."""
+    ds = xr.merge([load_out_ds(which, subdir=subdir) for which in OUT_VARS])
+    return ds
+
+
 @contextlib.contextmanager
 def out_and_back(p):
     """Context manager: change working directory to path `p` but return to original cwd after."""
@@ -149,7 +155,7 @@ def out_and_back(p):
 
 
 def build():
-    """Build the model with `make`."""
+    """Build the model with `ninja`."""
     with out_and_back(F_BUILD_DIR):
         subprocess.run(["ninja"], check=True)
 
