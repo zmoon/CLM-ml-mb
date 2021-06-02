@@ -167,13 +167,46 @@ contains
     real(rk), dimension(:), intent(in) :: bins
     real(rk), dimension(:), allocatable :: ynew
     integer :: i, n
-    n = size(bins)  ! number of bins!
+    n = size(bins)
 
     allocate(ynew(n-1))
     do i = 1, n - 1
       ynew(i) = smear1(x, y, bins(i), bins(i+1))
     end do
   end function smear
+
+
+  !> AOP smear
+  pure function smear_aop200_planck6000(x, y, bins) result(ynew)
+    real(rk), dimension(:), intent(in) :: x, y
+      !! `x` must be wavelength in microns!
+    real(rk), dimension(:), intent(in) :: bins
+    real(rk), dimension(:), allocatable :: ynew
+
+    integer :: i, n
+    integer, parameter :: n2 = 200
+      !! number of sub-bins within each bin
+      ! TODO: compute for each bin based on bin size?
+    real(rk) :: yi(n2), wi(n2), binsi(n2+1)
+
+    n = size(bins)  ! number of bin edges
+
+    allocate(ynew(n-1))
+    do i = 1, n - 1
+
+      ! Smear to sub-bins within bin
+      binsi = wle_equal_width([bins(i), bins(i+1)], n2)
+      yi = smear(x, y, binsi)
+
+      ! Construct weights using Planck
+      wi = l_wl_plank_integ(6000._rk, binsi(1:n2), binsi(2:n2+1))
+
+      ! Current bin value as weighted average of the sub-bins
+      ynew(i) = sum(yi * wi) / sum(wi)
+
+    end do
+
+  end function smear_aop200_planck6000
 
 
   !> Trapezoidal integral of y(x)
@@ -250,22 +283,30 @@ contains
 
 
   !> Distribute one value `yi` in band `wlbi` into sub-bands defined by edges `wle`
-  function distribute(wlbi, yi, wle, which, weight) result(y)
+  function distribute(wlbi, yi, wle, which, weight, weight_method) result(y)
     use m_mb_data  ! reference spectra
     real(rk), intent(in) :: wlbi(2), yi, wle(:)
     character(len=*), intent(in) :: which
     logical, intent(in), optional :: weight
+    integer, intent(in), optional :: weight_method
+      !! 1 - one correction factor for all bins
+      !! 2 - AOP smearing method (all bins corrected individually)
     real(rk), allocatable :: y(:)
 
     real(rk), allocatable :: wl0(:), y0(:), dwl(:), w(:)
-    integer :: n
+    integer :: n, iwm
 
     n = ubound(wle, dim=1)
     if ( wle(1) /= wle(1) .or. wle(n) /= wlbi(2) ) stop 'wle edges should match orig band'
     allocate(y(n-1), dwl(n-1), w(n-1))
     dwl = wle(2:n) - wle(1:n-1)
 
-    w = 1  ! default
+    iwm = 1  ! default weight method
+    if (present(weight_method)) then
+      iwm = weight_method
+    end if
+
+    w = 1  ! default weight for each bin for the overall average
     if ( present(weight) ) then
       if ( weight ) w = l_wl_plank_integ(6000._rk, wle(1:n-1), wle(2:n))
     end if
@@ -298,18 +339,35 @@ contains
     y = smear(wl0, y0, wle)
 
     ! Correct based on input value `yi`
-    select case (which)
+    which_var: select case (which)
       case ('idr', 'idf')
         y = y * dwl  ! W m-2 um-1 -> W m-2
         y = y * yi / sum(y)
 
-      case default
-        ! Weighted average
-        ! Weighting by waveband width and, if activated, solar intensity (6000 K Planck)
-        w = w * dwl
+      case default  ! ('rl', 'tl', 'rs')
+
+        w = w * dwl  ! add waveband width as weight
+
+        aop_weight_method: select case (iwm)
+          case (1)
+            ! Weighted average correction factor
+            ! Weighting by waveband width and, if activated, solar intensity (6000 K Planck)
+            continue  ! do nothing
+
+          case (2)
+            ! Use AOP smear instead of standard smear for y
+            y = smear_aop200_planck6000(wl0, y0, wle)
+
+          case default
+            stop 'invalid `weight_method`'
+
+        end select aop_weight_method
+
+        ! Correct using weighted average
         y = y * yi / sum(y * w) * sum(w)
 
-    end select
+    end select which_var
+
   end function distribute
 
 

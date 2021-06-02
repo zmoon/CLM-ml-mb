@@ -20,7 +20,7 @@ program test
     wle1(4), dwl1(3), rl1(3)
 
   !> Distribute rad
-  real(rk) :: wlbi(2), rli, tli, rsi, idri, idfi, wle(4), wle2(2)
+  real(rk) :: wlbi(2), wlbi2(2), rli, tli, rsi, idri, idfi, wle(4), wle2(2), wle3(4)
   real(rk), dimension(3) :: wl, dwl, rl, tl, rs, idr, idf
   real(rk), dimension(1) :: wl2, dwl2, rl2, tl2, rs2, idr2, idf2
 
@@ -98,6 +98,7 @@ program test
   ! print *, "bins:", bins1
   ! print *, "new:", ynew1
   print *, "new integ.:", sum(ynew1 * dbins1)
+  print *, 'smear of ones:', smear(x1, [(1._rk, i = 1, size(x1))], bins1)
   if ( sum(ynew1 * dbins1) /= trapz(x1, y1) ) stop "smear no good"  ! TODO: function for this check
 
   !> Smear leaf
@@ -127,7 +128,7 @@ program test
   call distribute_rad(wlbi, rli, tli, rsi, idri, idfi, wle, wl, dwl, rl, tl, rs, idr, idf)
   print *
   print *, "!> distribute rad -- to 3 bands"
-  fmt1 = "(1x, a3, 2x, g8.3, a, 2x, 3(g10.3))"
+  fmt1 = "(1x, a4, 2x, g8.3, a, 2x, 3(g10.3))"
   print fmt1, 'rl', rli, '->', rl
   print fmt1, 'tl', tli, '->', tl
   print fmt1, 'rs', rsi, '->', rs
@@ -139,12 +140,21 @@ program test
   print *, "!> distribute one spectrum at once (should be same result as above)"
   print fmt1, 'rl', rli, '->', distribute(wlbi, rli, wle, 'rl')
   print fmt1, 'rlw', rli, '->', distribute(wlbi, rli, wle, 'rl', weight=.true.)
+  print fmt1, 'rlw2', rli, '->', distribute(wlbi, rli, wle, 'rl', weight=.true., weight_method=2)
   print fmt1, 'tl', tli, '->', distribute(wlbi, tli, wle, 'tl')
   print fmt1, 'tlw', tli, '->', distribute(wlbi, tli, wle, 'tl', weight=.true.)
   print fmt1, 'rs', rsi, '->', distribute(wlbi, rsi, wle, 'rs')
   print fmt1, 'idr', idri, '->', distribute(wlbi, idri, wle, 'idr')
   print fmt1, 'idf', idfi, '->', distribute(wlbi, idfi, wle, 'idf')
 
+  !> Smear rl in NIR
+  wlbi2 = [0.8, 2.5]
+  wle3 = [0.8, 1.1, 1.8, 2.5]
+  print *
+  print *, "!> distribute rl to the NIR"
+  print fmt1, "rl", rli, '->', distribute(wlbi2, rli, wle3, 'rl')
+  print fmt1, "rlw1", rli, '->', distribute(wlbi2, rli, wle3, 'rl', weight=.true.)
+  print fmt1, "rlw2", rli, '->', distribute(wlbi2, rli, wle3, 'rl', weight=.true., weight_method=2)
 
   !> Check that if we have only one bin we get the same as what we put in
   wle2 = wlbi
