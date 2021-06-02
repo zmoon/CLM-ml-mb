@@ -519,8 +519,12 @@ contains
 
     p = 1
     swup = albcan(p,ivis)*(swskyb(p,ivis)+swskyd(p,ivis)) + albcan(p,inir)*(swskyb(p,inir)+swskyd(p,inir))
-    write (nout1,'(13f10.3)') rnet(p), stflx(p), shflx(p), lhflx(p), gppveg(p), ustar(p), &
-    swup, ircan(p), taf(p), gsoi(p), rnsoi(p), shsoi(p), lhsoi(p)
+    write (nout1,'(17f10.3)') &
+      rnet(p), stflx(p), shflx(p), lhflx(p), gppveg(p), ustar(p), &
+      swup, ircan(p), taf(p), gsoi(p), rnsoi(p), shsoi(p), lhsoi(p), &
+      albcan(p,ivis), albcan(p,inir), &
+      t_grnd(p), obu(p)
+
 
     mid = nbot(p) + (ntop(p)-nbot(p)+1)/2 - 1
     write (nout2,'(f10.4,5f10.3)') btran(p), lsc(p,ntop(p)), psis(p), lwp(p,ntop(p)), &

@@ -37,6 +37,10 @@ FLUX_OUT_VARS = [
     ("rns", "Ground net radiation", "W m-2"),
     ("shs", "Ground sensible heat flux", "W m-2"),
     ("lhs", "Ground latent heat flux", "W m-2"),
+    ("albcan_vis", "Canopy albedo for visible", "1"),
+    ("albcan_nir", "Canopy albedo for NIR", "1"),
+    ("tgnd", "Ground surface temperature", "K"),
+    ("obu", "Obukhov length", "m"),
 ]
 
 # nout2 - *_aux.out
