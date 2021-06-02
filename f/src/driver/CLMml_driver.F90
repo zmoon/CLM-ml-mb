@@ -450,6 +450,8 @@ contains
     lsc         => mlcanopy_inst%lsc           , &  ! Leaf-specific conductance of canopy layer (mmol H2O/m2 leaf/s/MPa)
     h2ocan      => mlcanopy_inst%h2ocan        , &  ! Canopy layer intercepted water (kg H2O/m2)
     tleaf       => mlcanopy_inst%tleaf         , &  ! Leaf temperature (K)
+    tleafsun    => mlcanopy_inst%tleafsun      , &
+    tleafsha    => mlcanopy_inst%tleafsha      , &
     rnleaf      => mlcanopy_inst%rnleaf        , &  ! Leaf net radiation (W/m2 leaf)
     shleaf      => mlcanopy_inst%shleaf        , &  ! Leaf sensible heat flux (W/m2 leaf)
     lhleaf      => mlcanopy_inst%lhleaf        , &  ! Leaf latent heat flux (W/m2 leaf)
@@ -519,11 +521,12 @@ contains
 
     p = 1
     swup = albcan(p,ivis)*(swskyb(p,ivis)+swskyd(p,ivis)) + albcan(p,inir)*(swskyb(p,inir)+swskyd(p,inir))
-    write (nout1,'(17f10.3)') &
+    write (nout1,'(21f10.3)') &
       rnet(p), stflx(p), shflx(p), lhflx(p), gppveg(p), ustar(p), &
       swup, ircan(p), taf(p), gsoi(p), rnsoi(p), shsoi(p), lhsoi(p), &
       albcan(p,ivis), albcan(p,inir), &
-      t_grnd(p), obu(p)
+      t_grnd(p), obu(p), &
+      swveg(p,ivis), swveg(p,inir), swvegsha(p,ivis), swvegsha(p,inir)
 
 
     mid = nbot(p) + (ntop(p)-nbot(p)+1)/2 - 1
@@ -533,19 +536,21 @@ contains
 !   go to 100
     do ic = ntop(p), 0, -1
        if (ic >= nbot(p)) then ! Leaf layer
-          write (nout3,'(f10.4,14f10.3)') curr_calday, zs(p,ic), dpai(p,ic), &
-          rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
-          apar(p,ic,isun)*fracsun(p,ic)+apar(p,ic,isha)*fracsha(p,ic), &
-          gs(p,ic,isun)*fracsun(p,ic)+gs(p,ic,isha)*fracsha(p,ic), lwp(p,ic), &
-          tveg(p,ic,isun)*fracsun(p,ic)+tveg(p,ic,isha)*fracsha(p,ic), &
-          wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic)
-!         wind(p,ic), tair(p,ic)-tfrz, eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic)
+          write (nout3,'(f10.4,16f10.3)') &
+            curr_calday, zs(p,ic), dpai(p,ic), &
+            rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
+            apar(p,ic,isun)*fracsun(p,ic)+apar(p,ic,isha)*fracsha(p,ic), &
+            gs(p,ic,isun)*fracsun(p,ic)+gs(p,ic,isha)*fracsha(p,ic), lwp(p,ic), &
+            tveg(p,ic,isun)*fracsun(p,ic)+tveg(p,ic,isha)*fracsha(p,ic), &
+            wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &
+            tleafsun(p,ic), tleafsha(p,ic)
        else ! Non-leaf layer or ground
-          write (nout3,'(f10.4,14f10.3)') curr_calday, zs(p,ic), zero_value, &
-          rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
-          missing_value, missing_value, missing_value, missing_value, &
-          wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic)
-!         wind(p,ic), tair(p,ic)-tfrz, eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic)
+          write (nout3,'(f10.4,16f10.3)') &
+            curr_calday, zs(p,ic), zero_value, &
+            rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
+            missing_value, missing_value, missing_value, missing_value, &
+            wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &
+            missing_value, missing_value
        end if
     end do
 

@@ -167,6 +167,8 @@ module CanopyFluxesMultilayerMod
     cair_old    => mlcanopy_inst%cair_old      , &  ! Atmospheric CO2 profile for previous timestep (umol/mol)
     tveg_old    => mlcanopy_inst%tveg_old      , &  ! Vegetation temperature profile for previous timestep (K)
     tleaf       => mlcanopy_inst%tleaf         , &  ! Leaf temperature (K)
+    tleafsun    => mlcanopy_inst%tleafsun      , &
+    tleafsha    => mlcanopy_inst%tleafsha      , &
     tleaf_old   => mlcanopy_inst%tleaf_old     , &  ! Leaf temperature for previous timestep (K)
     shair       => mlcanopy_inst%shair         , &  ! Canopy air sensible heat flux (W/m2)
     etair       => mlcanopy_inst%etair         , &  ! Canopy air water vapor flux (mol H2O/m2/s)
@@ -552,6 +554,10 @@ module CanopyFluxesMultilayerMod
           end if
        end do
        do ic = nbot(p), ntop(p)
+          ! First save shaded and sunlit so we can output them
+          tleafsun(p,ic) = tleaf(p,ic,isun)
+          tleafsha(p,ic) = tleaf(p,ic,isha)
+
           tleaf(p,ic,isun) = tleaf(p,ic,isun) * fracsun(p,ic) + tleaf(p,ic,isha) * fracsha(p,ic)
           tleaf(p,ic,isha) = tleaf(p,ic,isun)
        end do

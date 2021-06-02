@@ -104,6 +104,8 @@ module CanopyFluxesMultilayerType
     ! Leaf variables [for nlevcan layers and nleaf leaves (sunlit or shaded)]
 
     real(r8), pointer :: tleaf(:,:,:)       ! Leaf temperature (K)
+    real(r8), pointer :: tleafsun(:,:)
+    real(r8), pointer :: tleafsha(:,:)
     real(r8), pointer :: tleaf_old(:,:,:)   ! Leaf temperature for previous timestep (K)
     real(r8), pointer :: rnleaf(:,:,:)      ! Leaf net radiation (W/m2 leaf)
     real(r8), pointer :: stleaf(:,:,:)      ! Leaf storage heat flux (W/m2 leaf)
@@ -334,6 +336,8 @@ contains
     allocate (this%fc_prof        (begp:endp,0:nlevcan))                  ; this%fc_prof        (:,:)     = nan
     allocate (this%ga_prof        (begp:endp,0:nlevcan))                  ; this%ga_prof        (:,:)     = nan
     allocate (this%tleaf          (begp:endp,1:nlevcan,1:nleaf))          ; this%tleaf          (:,:,:)   = nan
+    allocate (this%tleafsun       (begp:endp,1:nlevcan))                  ; this%tleafsun       (:,:)     = nan
+    allocate (this%tleafsha       (begp:endp,1:nlevcan))                  ; this%tleafsha       (:,:)     = nan
     allocate (this%tleaf_old      (begp:endp,1:nlevcan,1:nleaf))          ; this%tleaf_old      (:,:,:)   = nan
     allocate (this%rnleaf         (begp:endp,1:nlevcan,1:nleaf))          ; this%rnleaf         (:,:,:)   = nan
     allocate (this%stleaf         (begp:endp,1:nlevcan,1:nleaf))          ; this%stleaf         (:,:,:)   = nan

@@ -41,6 +41,10 @@ FLUX_OUT_VARS = [
     ("albcan_nir", "Canopy albedo for NIR", "1"),
     ("tgnd", "Ground surface temperature", "K"),
     ("obu", "Obukhov length", "m"),
+    ("swveg_vis", "Absorbed visible radiation by vegetation", "W m-2"),
+    ("swveg_nir", "Absorbed NIR radiation by vegetation", "W m-2"),
+    ("swvegsha_vis", "Absorbed visible radiation by shaded vegetation", "W m-2"),
+    ("swvegsha_nir", "Absorbed NIR radiation by shaded vegetation", "W m-2"),
 ]
 
 # nout2 - *_aux.out
@@ -65,8 +69,8 @@ PROFILE_OUT_VARS = [
     ("rnl", "Canopy layer net radiation", "W m-2"),
     ("shl", "Canopy layer sensible heat flux", "W m-2"),
     ("lhl", "Canopy layer latent heat flux", "W m-2"),
-    ("fcl", "Canopy layer CO2 flux", "umol CO2 m-2 s-1"),
-    ("apar", "Leaf absorbed PAR", "umol photon (m2 leaf)-1 s-1"),
+    ("fcl", "Canopy layer CO2 flux", "μmol CO2 m-2 s-1"),
+    ("apar", "Leaf absorbed PAR", "μmol photon (m2 leaf)-1 s-1"),
     ("gl", "Leaf stomatal conductance", "mol H2O (m2 leaf)-1 s-1"),
     ("lwp", "Leaf water potential", "MPa"),
     ("tveg", "Vegetation temperature", "K"),
@@ -74,6 +78,8 @@ PROFILE_OUT_VARS = [
     ("dta", "Air temperature difference from reference height", "K"),
     ("ea", "Air vapor pressure", "kPa"),
     ("ras", "Aerodynamic resistance for scalars", "s m-1"),
+    ("tleafsun", "Sunlit leaf temperature", "K"),
+    ("tleafsha", "Shaded leaf temperature", "K"),
 ]
 
 OUT_VARS = {
