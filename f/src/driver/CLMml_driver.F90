@@ -402,6 +402,7 @@ contains
     ntop        => mlcanopy_inst%ntop          , &  ! Index for top leaf layer
     lai         => mlcanopy_inst%lai           , &  ! Leaf area index of canopy (m2/m2)
     sai         => mlcanopy_inst%sai           , &  ! Stem area index of canopy (m2/m2)
+    dlai        => mlcanopy_inst%dlai          , &  ! Layer leaf area index (m2/m2)
     dpai        => mlcanopy_inst%dpai          , &  ! Layer plant area index (m2/m2)
     sumpai      => mlcanopy_inst%sumpai        , &  ! Cumulative plant area index (m2/m2)
     zref        => mlcanopy_inst%zref          , &  ! Reference height (m)
@@ -521,12 +522,13 @@ contains
 
     p = 1
     swup = albcan(p,ivis)*(swskyb(p,ivis)+swskyd(p,ivis)) + albcan(p,inir)*(swskyb(p,inir)+swskyd(p,inir))
-    write (nout1,'(21f10.3)') &
+    write (nout1,'(23f10.3)') &
       rnet(p), stflx(p), shflx(p), lhflx(p), gppveg(p), ustar(p), &
       swup, ircan(p), taf(p), gsoi(p), rnsoi(p), shsoi(p), lhsoi(p), &
       albcan(p,ivis), albcan(p,inir), &
       t_grnd(p), obu(p), &
-      swveg(p,ivis), swveg(p,inir), swvegsha(p,ivis), swvegsha(p,inir)
+      swveg(p,ivis), swveg(p,inir), swvegsha(p,ivis), swvegsha(p,inir), &
+      lai(p), sai(p)
 
 
     mid = nbot(p) + (ntop(p)-nbot(p)+1)/2 - 1
@@ -536,8 +538,8 @@ contains
 !   go to 100
     do ic = ntop(p), 0, -1
        if (ic >= nbot(p)) then ! Leaf layer
-          write (nout3,'(f10.4,16f10.3)') &
-            curr_calday, zs(p,ic), dpai(p,ic), &
+          write (nout3,'(f10.4,17f10.3)') &
+            curr_calday, zs(p,ic), dpai(p,ic), dlai(p,ic), &
             rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
             apar(p,ic,isun)*fracsun(p,ic)+apar(p,ic,isha)*fracsha(p,ic), &
             gs(p,ic,isun)*fracsun(p,ic)+gs(p,ic,isha)*fracsha(p,ic), lwp(p,ic), &
@@ -545,8 +547,8 @@ contains
             wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &
             tleafsun(p,ic), tleafsha(p,ic)
        else ! Non-leaf layer or ground
-          write (nout3,'(f10.4,16f10.3)') &
-            curr_calday, zs(p,ic), zero_value, &
+          write (nout3,'(f10.4,17f10.3)') &
+            curr_calday, zs(p,ic), zero_value, zero_value, &
             rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
             missing_value, missing_value, missing_value, missing_value, &
             wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &

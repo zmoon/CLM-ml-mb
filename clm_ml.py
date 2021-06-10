@@ -45,6 +45,8 @@ FLUX_OUT_VARS = [
     ("swveg_nir", "Absorbed NIR radiation by vegetation", "W m-2"),
     ("swvegsha_vis", "Absorbed visible radiation by shaded vegetation", "W m-2"),
     ("swvegsha_nir", "Absorbed NIR radiation by shaded vegetation", "W m-2"),
+    ("lai", "Canopy leaf area index", "(m2 leaf) m-2"),
+    ("sai", "Canopy stem area index", "(m2 stem) m-2"),
 ]
 
 # nout2 - *_aux.out
@@ -65,7 +67,8 @@ AUX_OUT_VARS = [
 PROFILE_OUT_VARS = [
     ("calday", "Currently calendar day", ""),
     ("zs", "Canopy height (for scalar conc./source)", "m"),
-    ("dpai", "Layer plant area index", "m2 leaf m-2"),
+    ("dpai", "Layer plant area index", "(m2 leaf) m-2"),
+    ("dlai", "Layer leaf area index", "(m2 leaf) m-2"),
     ("rnl", "Canopy layer net radiation", "W m-2"),
     ("shl", "Canopy layer sensible heat flux", "W m-2"),
     ("lhl", "Canopy layer latent heat flux", "W m-2"),
