@@ -68,12 +68,11 @@ PROFILE_OUT_VARS = [
     ("calday", "Currently calendar day", ""),
     ("zs", "Canopy height (for scalar conc./source)", "m"),
     ("dpai", "Layer plant area index", "(m2 leaf) m-2"),
-    ("dlai", "Layer leaf area index", "(m2 leaf) m-2"),
     ("rnl", "Canopy layer net radiation", "W m-2"),
     ("shl", "Canopy layer sensible heat flux", "W m-2"),
     ("lhl", "Canopy layer latent heat flux", "W m-2"),
     ("fcl", "Canopy layer CO2 flux", "μmol CO2 m-2 s-1"),
-    ("apar", "Leaf absorbed PAR", "μmol photon (m2 leaf)-1 s-1"),
+    ("apar", "Leaf absorbed PAR", "μmol photon (m2 leaf)-1 s-1"),  # PPFD
     ("gl", "Leaf stomatal conductance", "mol H2O (m2 leaf)-1 s-1"),
     ("lwp", "Leaf water potential", "MPa"),
     ("tveg", "Vegetation temperature", "K"),
@@ -83,6 +82,8 @@ PROFILE_OUT_VARS = [
     ("ras", "Aerodynamic resistance for scalars", "s m-1"),
     ("tleafsun", "Sunlit leaf temperature", "K"),
     ("tleafsha", "Shaded leaf temperature", "K"),
+    ("dlai", "Layer leaf area index", "(m2 leaf) m-2"),
+    ("irleaf", "Leaf absorbed longwave radiation", "W (m2 leaf)-1"),
 ]
 
 OUT_VARS = {

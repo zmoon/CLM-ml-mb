@@ -538,7 +538,7 @@ contains
 !   go to 100
     do ic = ntop(p), 0, -1
        if (ic >= nbot(p)) then ! Leaf layer
-          write (nout3,'(f10.4,17f10.3)') &
+          write (nout3,'(f10.4,18f10.3)') &
             curr_calday, zs(p,ic), dpai(p,ic), &
             rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
             apar(p,ic,isun)*fracsun(p,ic)+apar(p,ic,isha)*fracsha(p,ic), &
@@ -546,15 +546,17 @@ contains
             tveg(p,ic,isun)*fracsun(p,ic)+tveg(p,ic,isha)*fracsha(p,ic), &
             wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &
             tleafsun(p,ic), tleafsha(p,ic), &
-            dlai(p,ic)
+            dlai(p,ic), &
+            irleaf(p,ic)
        else ! Non-leaf layer or ground
-          write (nout3,'(f10.4,17f10.3)') &
+          write (nout3,'(f10.4,18f10.3)') &
             curr_calday, zs(p,ic), zero_value, &
             rn_prof(p,ic), sh_prof(p,ic), lh_prof(p,ic), fc_prof(p,ic), &
             missing_value, missing_value, missing_value, missing_value, &
             wind(p,ic), tair(p,ic)-tref(p), eair(p,ic)/1000._r8, rhomol(p)/ga_prof(p,ic), &
             missing_value, missing_value, &
-            zero_value
+            zero_value, &
+            missing_value
        end if
     end do
 
