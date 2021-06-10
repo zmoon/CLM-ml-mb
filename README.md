@@ -18,7 +18,7 @@ Note
   - compiler: Fortran compiler (currently only GNU `gfortran` is supported in [the `meson.build`](f/src/meson.build))
   - libraries: NetCDF-Fortran, LAPACK, BLAS
 * Running with Python
-  - see [test/requirements.txt](./test/requirements.txt)
+  - see [the CI Python requirements](.github/workflows/ci_requirements.txt)
 
 ### Ubuntu
 
